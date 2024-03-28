@@ -1,0 +1,9 @@
+server:
+  port: 8888
+
+
+spring:
+  application:
+    name: mini-uri
+  thymeleaf:
+    mode: HTML
