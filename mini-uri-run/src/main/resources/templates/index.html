@@ -30,7 +30,7 @@
         let originalUrl = $('#long').val();
         if (originalUrl) {
             $.ajax({
-                url: "/mini/uri",
+                url: "/mini/uri/generate",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -44,8 +44,8 @@
                         alert(res.msg);
                     }
                 },
-                error: function () {
-                    alert('异常错误');
+                error: function (error) {
+                    alert(error);
                 }
             });
         } else {

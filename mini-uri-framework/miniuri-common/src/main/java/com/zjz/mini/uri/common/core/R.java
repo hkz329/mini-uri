@@ -53,6 +53,10 @@ public class R<T> implements Serializable {
         return rest(null, FAIL_CODE, FAIL_MSG);
     }
 
+    public static <T> R<T> fail(int code, String msg) {
+        return rest(null, code, msg);
+    }
+
     public static <T> R<T> fail(String msg) {
         return rest(null, FAIL_CODE, msg);
     }
