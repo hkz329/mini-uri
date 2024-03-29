@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>短链接生成</title>
+    <script src="/js/base.js"></script>
     <link rel="icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/base.css">
 </head>
@@ -20,34 +21,25 @@
             <span class="label">短链接</span>
             <span class="focus-bg"></span>
         </label>
-        <button type="button" id="copy" style="width:100px;" data-clipboard-action="copy" data-clipboard-target="#short">Copy</button>
+        <button type="button" id="copy" style="width:100px;" data-clipboard-action="copy"
+                data-clipboard-target="#short">Copy
+        </button>
     </div>
 </div>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/clipboard.min.js"></script>
 <script>
     $('#generate').click(() => {
         let originalUrl = $('#long').val();
         if (originalUrl) {
-            $.ajax({
-                url: "/mini/uri/generate",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    originalUrl: originalUrl
-                }),
-                dataType: "json",
-                success: function (res) {
+            generateUri(originalUrl)
+                .then(res => {
                     if (res.code === 200) {
                         $('#short').val(res.data);
                     } else {
                         alert(res.msg);
                     }
-                },
-                error: function (error) {
-                    alert(error);
-                }
-            });
+                }).catch(err => {
+                alert(err);
+            })
         } else {
             alert('请输入原始链接');
         }
