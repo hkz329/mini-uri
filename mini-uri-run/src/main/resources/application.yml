@@ -6,4 +6,16 @@ spring:
   application:
     name: mini-uri
   thymeleaf:
-    mode: HTML
+
+
+--- # redis
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      timeout: 10s
+      password:
+      database: 0
+      port: 6379
+      ssl:
+        enabled: false

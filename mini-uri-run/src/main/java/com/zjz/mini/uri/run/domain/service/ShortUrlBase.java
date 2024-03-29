@@ -19,10 +19,11 @@ public abstract class ShortUrlBase implements IShortUrlExec {
         // 计算hash
         long hash = toHash(url);
         // 转码
-        String encode = toEncode(hash);
-
+        String encodeUrl = toEncode(hash);
+        // 后续处理
+        String shortUrl = doProcess(encodeUrl, url, url);
         //
-        return encode;
+        return shortUrl;
     }
 
     protected abstract void checkUrl(String url);
@@ -30,6 +31,8 @@ public abstract class ShortUrlBase implements IShortUrlExec {
     protected abstract long toHash(String url);
 
     protected abstract String toEncode(long hash);
+
+    protected abstract String doProcess(String shortUrl, String longUrl,String originalUrl);
 
     @Override
     public R redirect(String url) {
