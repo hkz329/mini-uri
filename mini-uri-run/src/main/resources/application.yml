@@ -1,6 +1,6 @@
 server:
   port: 8888
-
+  host: https://miniuri.com/
 
 spring:
   application:

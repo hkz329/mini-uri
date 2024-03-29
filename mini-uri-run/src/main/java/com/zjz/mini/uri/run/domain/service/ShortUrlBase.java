@@ -13,13 +13,23 @@ public abstract class ShortUrlBase implements IShortUrlExec {
 
 
     @Override
-    public R generateShortUrl(String url) {
+    public String generateShortUrl(String url) {
         // 校验 url
-        if (UrlUtils.checkURL(url)) {
+        checkUrl(url);
+        // 计算hash
+        long hash = toHash(url);
+        // 转码
+        String encode = toEncode(hash);
 
-        }
-        return null;
+        //
+        return encode;
     }
+
+    protected abstract void checkUrl(String url);
+
+    protected abstract long toHash(String url);
+
+    protected abstract String toEncode(long hash);
 
     @Override
     public R redirect(String url) {

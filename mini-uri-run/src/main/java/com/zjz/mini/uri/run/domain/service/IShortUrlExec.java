@@ -4,7 +4,7 @@ import com.zjz.mini.uri.common.core.R;
 
 public interface IShortUrlExec {
 
-    R generateShortUrl(String url);
+    String generateShortUrl(String url);
 
     R redirect(String url);
 }

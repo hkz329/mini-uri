@@ -9,10 +9,9 @@ import java.util.Objects;
  */
 public class R<T> implements Serializable {
 
-    private static final int SUCCESS_CODE = 10001;
+    private static final int SUCCESS_CODE = 200;
     private static final String SUCCESS_MSG = "success";
-
-    private static final int FAIL_CODE = 40001;
+    private static final int FAIL_CODE = 500;
     private static final String FAIL_MSG = "fail";
     private int code;
     private String msg;
@@ -37,10 +36,6 @@ public class R<T> implements Serializable {
     public static <T> R<T> ok(T data) {
         return rest(data, SUCCESS_CODE, SUCCESS_MSG);
     }
-
-    public static <T> R<T> ok(String msg) {
-        return rest(null, SUCCESS_CODE, msg);
-    }
     public static <T> R<T> ok(T data, String msg) {
         return rest(data, SUCCESS_CODE, msg);
     }
@@ -55,10 +50,6 @@ public class R<T> implements Serializable {
 
     public static <T> R<T> fail(int code, String msg) {
         return rest(null, code, msg);
-    }
-
-    public static <T> R<T> fail(String msg) {
-        return rest(null, FAIL_CODE, msg);
     }
 
     public static <T> R<T> fail(T data, int code, String msg) {
