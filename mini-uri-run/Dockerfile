@@ -1,5 +1,6 @@
 FROM eclipse-temurin:21-jre
 
+MAINTAINER hkz329 190022707@qq.com
 ## 创建目录，并使用它作为工作目录
 RUN mkdir -p /miniuri-server
 WORKDIR /miniuri-server
@@ -14,8 +15,8 @@ ENV JAVA_OPTS="-Xms512m -Xmx512m -Djava.security.egd=file:/dev/./urandom"
 ## 应用参数
 ENV ARGS=""
 
-## 暴露后端项目的 48080 端口
-EXPOSE 48080
+## 暴露后端项目的 8888 端口
+EXPOSE 8888
 
 ## 启动后端项目
 CMD java ${JAVA_OPTS} -jar app.jar $ARGS
