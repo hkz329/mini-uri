@@ -1,9 +1,7 @@
 package com.zjz.mini.uri.run.application;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.zjz.mini.uri.common.core.R;
 import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
-import com.zjz.mini.uri.run.domain.service.ShortUrlBase;
 import com.zjz.mini.uri.run.domain.service.strategy.HashShortUrl;
 import org.springframework.stereotype.Service;
 

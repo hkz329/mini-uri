@@ -1,6 +1,6 @@
 package com.zjz.mini.uri.run.domain.service;
 
-import com.zjz.mini.uri.common.core.R;
+import com.zjz.mini.uri.framework.common.core.R;
 
 public interface IShortUrlExec {
 

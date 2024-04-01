@@ -29,6 +29,11 @@
                 <artifactId>miniuri-common</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.zjz.proj</groupId>
+                <artifactId>miniuri-spring-boot-starter-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!-- SpringBoot的依赖配置-->
             <dependency>

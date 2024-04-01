@@ -1,4 +1,4 @@
-package com.zjz.mini.uri.common.util;
+package com.zjz.mini.uri.framework.common.util;
 
 import java.util.regex.Pattern;
 

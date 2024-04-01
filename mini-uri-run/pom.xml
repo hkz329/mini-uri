@@ -31,6 +31,10 @@
         </dependency>
         <dependency>
             <groupId>com.zjz.proj</groupId>
+            <artifactId>miniuri-spring-boot-starter-mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zjz.proj</groupId>
             <artifactId>miniuri-common</artifactId>
         </dependency>
         <dependency>

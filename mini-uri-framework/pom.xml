@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>miniuri-common</module>
+        <module>miniuri-spring-boot-starter-mybatis</module>
     </modules>
 
     <properties>

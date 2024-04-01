@@ -1,8 +1,6 @@
 package com.zjz.mini.uri.run.domain.service;
 
-import cn.hutool.core.util.URLUtil;
-import com.zjz.mini.uri.common.core.R;
-import com.zjz.mini.uri.common.util.UrlUtils;
+import com.zjz.mini.uri.framework.common.core.R;
 
 /**
  * 短链 Base

@@ -1,4 +1,4 @@
-package com.zjz.mini.uri.common.core;
+package com.zjz.mini.uri.framework.common.core;
 
 import java.io.Serial;
 

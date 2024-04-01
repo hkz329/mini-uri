@@ -1,7 +1,7 @@
 package com.zjz.mini.uri.run.config;
 
-import com.zjz.mini.uri.common.core.BusinessException;
-import com.zjz.mini.uri.common.core.R;
+import com.zjz.mini.uri.framework.common.core.BusinessException;
+import com.zjz.mini.uri.framework.common.core.R;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
