@@ -6,5 +6,5 @@ public interface IShortUrlExec {
 
     String generateShortUrl(String url);
 
-    R redirect(String url);
+    String redirect(String url);
 }

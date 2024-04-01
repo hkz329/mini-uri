@@ -4,6 +4,7 @@ import cn.hutool.bloomfilter.BitMapBloomFilter;
 import cn.hutool.bloomfilter.BloomFilterUtil;
 import cn.hutool.core.codec.Base62;
 import cn.hutool.core.util.HashUtil;
+import com.alibaba.druid.util.StringUtils;
 import com.zjz.mini.uri.run.domain.entity.UrlMapping;
 import com.zjz.mini.uri.run.domain.service.ShortUrlBase;
 import jakarta.annotation.Resource;
@@ -79,5 +80,19 @@ public class HashShortUrl extends ShortUrlBase {
         }
 
         return shortUrl;
+    }
+
+    @Override
+    protected String redirectToLong(String shortUrl) {
+        // 查缓存
+        String longUrl = (String) this.redisTemplate.opsForValue().get(shortUrl);
+        if (null != longUrl) {
+            return longUrl;
+        }
+        UrlMapping urlMapping = super.getByShortUrl(shortUrl);
+        if (null != urlMapping.getLong_url()) {
+
+        }
+        return urlMapping.getLong_url();
     }
 }

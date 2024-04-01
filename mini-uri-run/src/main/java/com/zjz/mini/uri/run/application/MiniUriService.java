@@ -17,4 +17,10 @@ public class MiniUriService {
         String shortUrl = bean.generateShortUrl(req.getOriginalUrl());
         return shortUrl;
     }
+
+    public String redirect(String shortUrl) {
+        HashShortUrl bean = SpringUtil.getBean(HashShortUrl.class);
+        String longUrl = bean.redirect(shortUrl);
+        return longUrl;
+    }
 }

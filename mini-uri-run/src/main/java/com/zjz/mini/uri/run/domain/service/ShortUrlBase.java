@@ -9,6 +9,11 @@ import com.zjz.mini.uri.framework.common.core.R;
  */
 public abstract class ShortUrlBase extends ShortUrlSupport implements IShortUrlExec {
 
+    /**
+     * 生成短链
+     * @param url
+     * @return
+     */
     @Override
     public String generateShortUrl(String url) {
         // 校验 url
@@ -31,10 +36,17 @@ public abstract class ShortUrlBase extends ShortUrlSupport implements IShortUrlE
 
     protected abstract String doProcess(String shortUrl, String longUrl, String originalUrl);
 
+    /**
+     * 重定向
+     * @param url
+     * @return
+     */
     @Override
-    public R redirect(String url) {
-        return null;
+    public String redirect(String url) {
+        return redirectToLong(url);
     }
+
+    protected abstract String redirectToLong(String url);
 
 
 }

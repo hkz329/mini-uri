@@ -18,4 +18,8 @@ public class ShortUrlSupport {
     public int addUrlMapping(UrlMapping urlMapping) {
         return this.urlMappingRepository.addUrlMapping(urlMapping);
     }
+
+    public UrlMapping getByShortUrl(String shortUrl) {
+        return this.urlMappingRepository.getByShortUrl(shortUrl);
+    }
 }

@@ -4,15 +4,17 @@ import com.zjz.mini.uri.framework.common.core.R;
 import com.zjz.mini.uri.run.application.MiniUriService;
 import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 /**
  * @author hkz329
  */
 @RestController
-@RequestMapping("/mini/uri")
 public class MiniUriController {
 
     @Value("${server.host}")
@@ -23,9 +25,20 @@ public class MiniUriController {
 
 
     @PostMapping("/generate")
-    @ResponseBody
     public R generateShortURL(@RequestBody GenerateUrlReq req) {
         String shortURL = miniUriService.generateShortURL(req);
         return R.ok(host + shortURL);
+    }
+
+    @GetMapping("/{shortUrl}")
+    public void redirect(@PathVariable("shortUrl") String shortUrl, HttpServletResponse response) {
+        String longUrl = this.miniUriService.redirect(shortUrl);
+        Optional.ofNullable(longUrl).ifPresentOrElse(e -> {
+            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+            response.setHeader("Location",e);
+        },()->{
+            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+            response.setHeader("Location","/");
+        });
     }
 }
