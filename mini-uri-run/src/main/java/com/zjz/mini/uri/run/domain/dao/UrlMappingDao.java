@@ -1,4 +1,4 @@
-package com.zjz.mini.uri.run.domain.repository;
+package com.zjz.mini.uri.run.domain.dao;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

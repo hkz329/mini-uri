@@ -1,4 +1,4 @@
-package com.zjz.mini.uri.run.domain.repository;
+package com.zjz.mini.uri.run.domain.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zjz.mini.uri.run.domain.entity.UrlMapping;

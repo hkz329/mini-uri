@@ -8,13 +8,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * url 映射表
+ *
  * @TableName url_mapping
  */
-@TableName(value ="url_mapping")
+@TableName(value = "url_mapping")
 @Data
+@Accessors(chain = true)
 public class UrlMapping implements Serializable {
     /**
      * 主键

@@ -7,8 +7,7 @@ import com.zjz.mini.uri.framework.common.core.R;
  *
  * @author 19002
  */
-public abstract class ShortUrlBase implements IShortUrlExec {
-
+public abstract class ShortUrlBase extends ShortUrlSupport implements IShortUrlExec {
 
     @Override
     public String generateShortUrl(String url) {
@@ -30,13 +29,12 @@ public abstract class ShortUrlBase implements IShortUrlExec {
 
     protected abstract String toEncode(long hash);
 
-    protected abstract String doProcess(String shortUrl, String longUrl,String originalUrl);
+    protected abstract String doProcess(String shortUrl, String longUrl, String originalUrl);
 
     @Override
     public R redirect(String url) {
         return null;
     }
-
 
 
 }

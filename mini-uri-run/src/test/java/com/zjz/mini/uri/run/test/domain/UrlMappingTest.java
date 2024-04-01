@@ -1,7 +1,7 @@
 package com.zjz.mini.uri.run.test.domain;
 
 import com.zjz.mini.uri.run.domain.entity.UrlMapping;
-import com.zjz.mini.uri.run.domain.repository.UrlMappingMapper;
+import com.zjz.mini.uri.run.domain.dao.UrlMappingMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
