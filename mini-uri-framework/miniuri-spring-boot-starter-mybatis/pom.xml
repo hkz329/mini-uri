@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.zjz.proj</groupId>
         <artifactId>mini-uri-framework</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>miniuri-spring-boot-starter-mybatis</artifactId>
