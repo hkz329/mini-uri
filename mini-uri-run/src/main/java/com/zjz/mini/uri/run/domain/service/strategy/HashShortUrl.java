@@ -4,6 +4,8 @@ import cn.hutool.bloomfilter.BitMapBloomFilter;
 import cn.hutool.bloomfilter.BloomFilterUtil;
 import cn.hutool.core.codec.Base62;
 import cn.hutool.core.util.HashUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.druid.util.StringUtils;
 import com.zjz.mini.uri.run.domain.entity.UrlMapping;
 import com.zjz.mini.uri.run.domain.service.ShortUrlBase;
@@ -36,6 +38,7 @@ public class HashShortUrl extends ShortUrlBase {
     @Override
     protected void checkUrl(String url) {
         // todo 校验
+        log.info("start check url:{}", url);
     }
 
     @Override
@@ -72,10 +75,13 @@ public class HashShortUrl extends ShortUrlBase {
             // 布隆过滤器不包含的一定不存在
             // 存数据库
             // fixme 此处 build_type 先写死
-            super.addUrlMapping(new UrlMapping().setShort_url(shortUrl).setLong_url(originUrl).setBuild_type(0).setCreate_time(LocalDateTime.now()));
+            UrlMapping urlMapping = new UrlMapping().setShort_url(shortUrl).setLong_url(originUrl).setBuild_type(0).setCreate_time(LocalDateTime.now());
+            log.info("start to insert into mysql,data:{}", JSONUtil.toJsonStr(urlMapping));
+            super.addUrlMapping(urlMapping);
             FILTER.add(shortUrl);
             // 存缓存
             // fixme 此处 缓存时间先写死
+            log.info("start to insert into redis,data:{}", JSONUtil.toJsonStr(urlMapping));
             this.redisTemplate.opsForValue().set(shortUrl, originUrl, 1, TimeUnit.HOURS);
         }
 
