@@ -4,9 +4,9 @@ import cn.hutool.bloomfilter.BitMapBloomFilter;
 import cn.hutool.bloomfilter.BloomFilterUtil;
 import cn.hutool.core.codec.Base62;
 import cn.hutool.core.util.HashUtil;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.druid.util.StringUtils;
+import com.zjz.mini.uri.framework.common.core.BusinessException;
+import com.zjz.mini.uri.framework.common.util.UrlUtils;
 import com.zjz.mini.uri.run.domain.entity.UrlMapping;
 import com.zjz.mini.uri.run.domain.service.ShortUrlBase;
 import jakarta.annotation.Resource;
@@ -37,8 +37,9 @@ public class HashShortUrl extends ShortUrlBase {
     private RedisTemplate<String, Object> redisTemplate;
     @Override
     protected void checkUrl(String url) {
-        // todo 校验
-        log.info("start check url:{}", url);
+        if (!UrlUtils.checkURL(url)) {
+            throw new BusinessException("url 格式错误");
+        }
     }
 
     @Override

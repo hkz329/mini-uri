@@ -12,12 +12,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class MiniUriService {
 
+    /**
+     * 生成短链
+     * @param req
+     * @return
+     */
     public String generateShortURL(GenerateUrlReq req) {
         HashShortUrl bean = SpringUtil.getBean(HashShortUrl.class);
         String shortUrl = bean.generateShortUrl(req.getOriginalUrl());
         return shortUrl;
     }
 
+    /**
+     * 重定向
+     * @param shortUrl
+     * @return
+     */
     public String redirect(String shortUrl) {
         HashShortUrl bean = SpringUtil.getBean(HashShortUrl.class);
         String longUrl = bean.redirect(shortUrl);

@@ -1,6 +1,5 @@
 package com.zjz.mini.uri.run.domain.service;
 
-import com.zjz.mini.uri.framework.common.core.R;
 
 /**
  * 短链 Base

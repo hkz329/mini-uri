@@ -12,6 +12,7 @@ import java.util.Optional;
 
 
 /**
+ * MiniUriController
  * @author hkz329
  */
 @RestController
@@ -23,13 +24,22 @@ public class MiniUriController {
     @Resource
     private MiniUriService miniUriService;
 
-
+    /**
+     * 生成短链
+     * @param req
+     * @return
+     */
     @PostMapping("/generate")
     public R generateShortURL(@RequestBody GenerateUrlReq req) {
         String shortURL = miniUriService.generateShortURL(req);
         return R.ok(host + shortURL);
     }
 
+    /**
+     * 跳转重定向
+     * @param shortUrl
+     * @param response
+     */
     @GetMapping("/{shortUrl}")
     public void redirect(@PathVariable("shortUrl") String shortUrl, HttpServletResponse response) {
         String longUrl = this.miniUriService.redirect(shortUrl);
@@ -37,6 +47,7 @@ public class MiniUriController {
             response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
             response.setHeader("Location",e);
         },()->{
+            // 如果 longUrl 为空跳回源站
             response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
             response.setHeader("Location","/");
         });
