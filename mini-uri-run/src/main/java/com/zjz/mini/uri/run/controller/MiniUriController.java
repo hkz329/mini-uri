@@ -3,6 +3,8 @@ package com.zjz.mini.uri.run.controller;
 import com.zjz.mini.uri.framework.common.core.R;
 import com.zjz.mini.uri.run.application.MiniUriService;
 import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
+import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
+import com.zjz.mini.uri.run.infrastructure.aop.handler.GenShortUrlPreventHandler;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,7 @@ public class MiniUriController {
      * @param req
      * @return
      */
+    @Prevent(time = 5, message = "5秒内不允许重复请求", strategy = GenShortUrlPreventHandler.class)
     @PostMapping("/generate")
     public R generateShortURL(@RequestBody GenerateUrlReq req) {
         String shortURL = miniUriService.generateShortURL(req);
