@@ -6,6 +6,7 @@ import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
 import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
 import com.zjz.mini.uri.run.infrastructure.aop.handler.GenShortUrlPreventHandler;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
