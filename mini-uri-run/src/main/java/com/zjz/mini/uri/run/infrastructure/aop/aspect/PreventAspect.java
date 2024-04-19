@@ -39,7 +39,7 @@ public class PreventAspect {
         }
         if (isPreventHandler) {
             PreventHandler handler = SpringUtil.getBean(strategy);
-            handler.handel(annotation, methodFullName);
+            handler.handle(annotation, methodFullName);
         }
     }
 }

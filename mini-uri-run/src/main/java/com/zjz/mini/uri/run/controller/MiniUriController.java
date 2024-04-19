@@ -32,7 +32,7 @@ public class MiniUriController {
      * @param req
      * @return
      */
-    @Prevent(time = 5, message = "5秒内不允许重复请求", strategy = GenShortUrlPreventHandler.class)
+    @Prevent(time = 5, message = "5秒内不允许重复生成", strategy = GenShortUrlPreventHandler.class)
     @PostMapping("/generate")
     public R generateShortURL(@RequestBody GenerateUrlReq req) {
         String shortURL = miniUriService.generateShortURL(req);

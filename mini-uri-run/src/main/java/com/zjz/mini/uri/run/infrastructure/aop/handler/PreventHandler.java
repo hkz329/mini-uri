@@ -7,5 +7,5 @@ import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
  * @author hkz329
  */
 public interface PreventHandler {
-    void handel(Prevent prevent, String methodFullName);
+    void handle(Prevent prevent, String methodFullName);
 }

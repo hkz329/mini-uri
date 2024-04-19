@@ -22,10 +22,6 @@ public class RequestFilter implements Filter {
         // RequestFilter 实例化的时候调用此方法，进行加载filterConfig
     }
 
-    /**
-     * OncePerRequestFilter 对比
-     */
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain){
         try {
@@ -34,7 +30,7 @@ public class RequestFilter implements Filter {
             HttpContextHolder.setHttpRequest(servletRequest);
             HttpContextHolder.setHttpResponse(servletResponse);
             filterChain.doFilter(servletRequest, servletResponse);
-            log.info("doFilter end,Time:{}, consume:{}", LocalDateTime.now(), Duration.between(start, LocalDateTime.now()).toMillis());
+            log.info("doFilter end,Time:{}, consume:{} ms", LocalDateTime.now(), Duration.between(start, LocalDateTime.now()).toMillis());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }finally {
