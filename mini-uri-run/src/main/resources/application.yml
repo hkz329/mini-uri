@@ -3,6 +3,8 @@ miniuri:
   info:
     version: 1.0.0
     base-package: com.zjz.mini.uri.run
+  cache:
+    timeout: 1
 
 # 启动端口
 server:
