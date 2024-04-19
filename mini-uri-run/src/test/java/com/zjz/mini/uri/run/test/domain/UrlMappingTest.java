@@ -23,10 +23,10 @@ public class UrlMappingTest {
     @Test
     public void test_insert() {
         UrlMapping entity = new UrlMapping();
-        entity.setBuild_type(0);
-        entity.setLong_url("https://www.zhangjinzhao.com/blog-cicd/#github-action-%E8%87%AA%E5%8A%A8%E6%9E%84%E5%BB%BA%E9%83%A8%E7%BD%B2");
-        entity.setShort_url("https://www.zhangjinzhao.com/asas12n1n2");
-        entity.setCreate_time(LocalDateTime.now());
+        entity.setBuildType(0);
+        entity.setLongUrl("https://www.zhangjinzhao.com/blog-cicd/#github-action-%E8%87%AA%E5%8A%A8%E6%9E%84%E5%BB%BA%E9%83%A8%E7%BD%B2");
+        entity.setShortUrl("https://www.zhangjinzhao.com/asas12n1n2");
+        entity.setCreateTime(LocalDateTime.now());
         int insert = this.urlMappingMapper.insert(entity);
         log.info("test_insert，res:{}", insert);
     }
