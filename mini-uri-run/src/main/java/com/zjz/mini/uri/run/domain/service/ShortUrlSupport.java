@@ -15,7 +15,7 @@ public class ShortUrlSupport {
     @Resource
     private UrlMappingRepository urlMappingRepository;
 
-    public int addUrlMapping(UrlMapping urlMapping) {
+    public boolean addUrlMapping(UrlMapping urlMapping) {
         return this.urlMappingRepository.addUrlMapping(urlMapping);
     }
 

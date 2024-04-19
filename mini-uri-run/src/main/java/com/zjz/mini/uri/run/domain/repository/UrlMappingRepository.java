@@ -19,8 +19,8 @@ public class UrlMappingRepository {
     @Resource
     private UrlMappingDao urlMappingDao;
 
-    public int addUrlMapping(UrlMapping urlMapping) {
-        return this.urlMappingMapper.insert(urlMapping);
+    public boolean addUrlMapping(UrlMapping urlMapping) {
+        return this.urlMappingDao.saveOrUpdate(urlMapping);
     }
 
     public UrlMapping getByShortUrl(String shortUrl) {
