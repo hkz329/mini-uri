@@ -29,6 +29,7 @@ public class PreventAspect {
         Prevent annotation = method.getAnnotation(Prevent.class);
         // 方法全名
         String methodFullName = method.getDeclaringClass().getName() + method.getName();
+        Object[] args = jp.getArgs();
         // 自定义策略
         Class<? extends PreventHandler> strategy = annotation.strategy();
         boolean isPreventHandler;
@@ -39,7 +40,7 @@ public class PreventAspect {
         }
         if (isPreventHandler) {
             PreventHandler handler = SpringUtil.getBean(strategy);
-            handler.handle(annotation, methodFullName);
+            handler.handle(annotation, methodFullName, args);
         }
     }
 }

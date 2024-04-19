@@ -1,7 +1,10 @@
 package com.zjz.mini.uri.run.infrastructure.config;
 
 import com.zjz.mini.uri.run.infrastructure.HttpContextHolder;
+import com.zjz.mini.uri.run.infrastructure.MyHttpServletRequestWrapper;
 import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 
 /**
  * 请求过滤
+ *
  * @author hkz329
  */
 @Slf4j
@@ -23,17 +27,18 @@ public class RequestFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain){
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
         try {
             LocalDateTime start = LocalDateTime.now();
-            log.info("doFilter start,Time:{}",start);
+            log.info("doFilter start,Time:{}", start);
             HttpContextHolder.setHttpRequest(servletRequest);
+            HttpServletRequestWrapper httpServletRequestWrapper = new MyHttpServletRequestWrapper((HttpServletRequest) servletRequest);
             HttpContextHolder.setHttpResponse(servletResponse);
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter(httpServletRequestWrapper, servletResponse);
             log.info("doFilter end,Time:{}, consume:{} ms", LocalDateTime.now(), Duration.between(start, LocalDateTime.now()).toMillis());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-        }finally {
+        } finally {
             HttpContextHolder.remove();
         }
     }

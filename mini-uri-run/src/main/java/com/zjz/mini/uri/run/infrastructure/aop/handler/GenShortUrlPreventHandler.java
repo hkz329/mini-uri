@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,12 +32,10 @@ public class GenShortUrlPreventHandler implements PreventHandler {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public void handle(Prevent prevent, String methodFullName) {
+    public void handle(Prevent prevent, String methodFullName, Object[] args){
         ServletRequest request = HttpContextHolder.getHttpRequest();
         String clientIP = JakartaServletUtil.getClientIP((HttpServletRequest) request);
-        ContentCachingRequestWrapper wrapperRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
-        String body = JakartaServletUtil.getBody(wrapperRequest);
-        GenerateUrlReq req = JSONUtil.toBean(body.toString(), GenerateUrlReq.class);
+        GenerateUrlReq req =(GenerateUrlReq) args[0];
         String originalUrl = req.getOriginalUrl();
         log.info("clientIP:{}", clientIP);
         long expire = prevent.time();
