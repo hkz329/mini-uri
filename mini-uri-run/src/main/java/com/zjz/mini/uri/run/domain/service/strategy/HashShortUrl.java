@@ -76,7 +76,7 @@ public class HashShortUrl extends ShortUrlBase {
             // 布隆过滤器不包含的一定不存在
             // 存数据库
             // fixme 此处 build_type 先写死
-            UrlMapping urlMapping = new UrlMapping().setShort_url(shortUrl).setLong_url(originUrl).setBuild_type(0).setCreate_time(LocalDateTime.now());
+            UrlMapping urlMapping = new UrlMapping().setShortUrl(shortUrl).setLongUrl(originUrl).setBuildType(0);
             log.info("start to insert into mysql,data:{}", JSONUtil.toJsonStr(urlMapping));
             super.addUrlMapping(urlMapping);
             FILTER.add(shortUrl);
@@ -97,9 +97,9 @@ public class HashShortUrl extends ShortUrlBase {
             return longUrl;
         }
         UrlMapping urlMapping = super.getByShortUrl(shortUrl);
-        if (null != urlMapping.getLong_url()) {
+        if (null != urlMapping.getLongUrl()) {
 
         }
-        return urlMapping.getLong_url();
+        return urlMapping.getLongUrl();
     }
 }

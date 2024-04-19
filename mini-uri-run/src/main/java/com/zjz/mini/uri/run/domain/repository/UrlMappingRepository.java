@@ -20,12 +20,16 @@ public class UrlMappingRepository {
     private UrlMappingDao urlMappingDao;
 
     public boolean addUrlMapping(UrlMapping urlMapping) {
+        LambdaQueryWrapper<UrlMapping> queryWrapper = Wrappers.lambdaQuery(UrlMapping.class);
+        queryWrapper.eq(UrlMapping::getShortUrl, urlMapping.getShortUrl());
+        UrlMapping exist = Optional.ofNullable(this.urlMappingMapper.selectOne(queryWrapper)).orElseGet(UrlMapping::new);
+        urlMapping.setId(exist.getId());
         return this.urlMappingDao.saveOrUpdate(urlMapping);
     }
 
     public UrlMapping getByShortUrl(String shortUrl) {
         LambdaQueryWrapper<UrlMapping> queryWrapper = Wrappers.lambdaQuery(UrlMapping.class);
-        queryWrapper.eq(UrlMapping::getShort_url, shortUrl);
+        queryWrapper.eq(UrlMapping::getShortUrl, shortUrl);
         return Optional.ofNullable(this.urlMappingMapper.selectOne(queryWrapper)).orElseGet(UrlMapping::new);
     }
 }

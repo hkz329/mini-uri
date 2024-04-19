@@ -1,8 +1,10 @@
 package com.zjz.mini.uri.framework.mybatis.config;
 
 
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.zjz.mini.uri.framework.mybatis.handler.DefaultDBFieldHandler;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -27,5 +29,14 @@ public class MiniUriMybatisAutoConfiguration {
         // 分页插件
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return mybatisPlusInterceptor;
+    }
+
+    /**
+     * 自动填充
+     * @return
+     */
+    @Bean
+    public MetaObjectHandler defaultMetaObjectHandler(){
+        return new DefaultDBFieldHandler(); // 自动填充参数类
     }
 }
