@@ -37,7 +37,6 @@ public class GenShortUrlPreventHandler implements PreventHandler {
         String clientIP = JakartaServletUtil.getClientIP((HttpServletRequest) request);
         GenerateUrlReq req =(GenerateUrlReq) args[0];
         String originalUrl = req.getOriginalUrl();
-        log.info("clientIP:{}", clientIP);
         long expire = prevent.time();
         String encode = Base64.encode(methodFullName + clientIP + originalUrl);
         Object resp = this.redisTemplate.opsForValue().get(encode);

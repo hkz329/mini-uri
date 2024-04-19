@@ -13,10 +13,10 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+
 import java.util.concurrent.TimeUnit;
 
 
@@ -30,14 +30,15 @@ public class HashShortUrl extends ShortUrlBase {
 
     //自定义长链接防重复字符串
     private static final String DUPLICATE = "$";
-
     @Value("${miniuri.cache.timeout}")
     private Long TIMEOUT;
     //创建布隆过滤器
     private static final BitMapBloomFilter FILTER = BloomFilterUtil.createBitMap(10);
-
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+    @Resource
+    private ThreadPoolTaskExecutor taskExecutor;
+
     @Override
     protected void checkUrl(String url) {
         if (!UrlUtils.checkURL(url)) {
@@ -85,14 +86,15 @@ public class HashShortUrl extends ShortUrlBase {
         } else {
             // 布隆过滤器不包含的一定不存在
             // 存数据库
-            // fixme 此处 build_type 先写死
-            UrlMapping urlMapping = new UrlMapping().setShortUrl(shortUrl).setLongUrl(originUrl).setBuildType(0);
-            log.info("start to insert into mysql,data:{}", JSONUtil.toJsonStr(urlMapping));
-            super.addUrlMapping(urlMapping);
-            FILTER.add(shortUrl);
-            // 存缓存
-            log.info("start to insert into redis,data:{}", JSONUtil.toJsonStr(urlMapping));
-            this.redisTemplate.opsForValue().set(shortUrl, originUrl, TIMEOUT, TimeUnit.HOURS);
+            String finalShortUrl = shortUrl;
+            this.taskExecutor.execute(()->{
+                // fixme 此处 build_type 先写死
+                UrlMapping urlMapping = new UrlMapping().setShortUrl(finalShortUrl).setLongUrl(originUrl).setBuildType(0);
+                FILTER.add(finalShortUrl);
+                // 存缓存
+                this.redisTemplate.opsForValue().set(finalShortUrl, originUrl, TIMEOUT, TimeUnit.HOURS);
+                super.addUrlMapping(urlMapping);
+            });
         }
 
         return shortUrl;
