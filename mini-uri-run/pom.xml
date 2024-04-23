@@ -38,6 +38,14 @@
             <artifactId>miniuri-spring-boot-starter-mybatis</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.zjz.proj</groupId>
             <artifactId>miniuri-common</artifactId>
         </dependency>
@@ -61,6 +69,7 @@
                     <execution>
                         <goals>
                             <goal>repackage</goal> <!-- 将引入的 jar 打入其中 -->
+                            <goal>build-info</goal>
                         </goals>
                     </execution>
                 </executions>
