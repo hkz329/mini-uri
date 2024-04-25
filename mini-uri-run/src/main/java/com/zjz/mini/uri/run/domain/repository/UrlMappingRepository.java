@@ -32,4 +32,8 @@ public class UrlMappingRepository {
         queryWrapper.eq(UrlMapping::getShortUrl, shortUrl);
         return Optional.ofNullable(this.urlMappingMapper.selectOne(queryWrapper)).orElseGet(UrlMapping::new);
     }
+
+    public int deleteExpired() {
+        return this.urlMappingMapper.deleteExpired();
+    }
 }

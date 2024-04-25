@@ -7,12 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
+@ActiveProfiles("dev")
 @Slf4j
 public class UrlMappingTest {
 
@@ -29,5 +31,11 @@ public class UrlMappingTest {
         entity.setCreateTime(LocalDateTime.now());
         int insert = this.urlMappingMapper.insert(entity);
         log.info("test_insert，res:{}", insert);
+    }
+
+    @Test
+    public void test_deleteExpired() {
+        int i = this.urlMappingMapper.deleteExpired();
+        System.out.println(i);
     }
 }
