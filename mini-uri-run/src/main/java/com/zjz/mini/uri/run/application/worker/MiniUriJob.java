@@ -24,7 +24,7 @@ public class MiniUriJob {
     private UrlMappingRepository UrlMappingRepository;
 
     @Async
-    @Scheduled(cron = "*/10 * * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     public void task() {
         log.info("start job======= {}", LocalDateTime.now());
         int count = this.UrlMappingRepository.deleteExpired();
