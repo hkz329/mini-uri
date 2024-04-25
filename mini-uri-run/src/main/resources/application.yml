@@ -14,8 +14,14 @@ server:
 spring:
   application:
     name: mini-uri
+  web:
+    resources:
+      static-locations: classpath:/static/
+  mvc:
+    static-path-pattern: /static/**
   thymeleaf:
-
+    encoding: utf-8
+    mode: HTML5
 
 --- # redis
 spring:

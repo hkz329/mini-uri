@@ -3,7 +3,7 @@
  */
 
 
-document.write('<script src="/js/jquery.min.js" type="text/javascript" charset="UTF-8"></script>');
-document.write('<script src="/js/clipboard.min.js" type="text/javascript" charset="UTF-8"></script>');
-document.write('<script src="/js/request.js" type="text/javascript" charset="UTF-8"></script>');
-document.write('<script src="/js/api.js" type="text/javascript" charset="UTF-8"></script>');
+document.write('<script src="/static/js/jquery.min.js" type="text/javascript" charset="UTF-8"></script>');
+document.write('<script src="/static/js/clipboard.min.js" type="text/javascript" charset="UTF-8"></script>');
+document.write('<script src="/static/js/request.js" type="text/javascript" charset="UTF-8"></script>');
+document.write('<script src="/static/js/api.js" type="text/javascript" charset="UTF-8"></script>');
