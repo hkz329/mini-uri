@@ -42,9 +42,15 @@ public class UrlMapping implements Serializable {
     private Integer buildType;
 
     /**
+     * 过期时间
+     */
+    @TableField(value = "expire_time")
+    private LocalDateTime expireTime;
+
+    /**
      * 创建时间
      */
-    @TableField(value = "create_time",fill = FieldFill.INSERT)
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**

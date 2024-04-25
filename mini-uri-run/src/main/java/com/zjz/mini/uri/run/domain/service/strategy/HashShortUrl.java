@@ -17,11 +17,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.concurrent.TimeUnit;
 
 
 /**
  * 基于 Hash 算法
+ *
  * @author hkz329
  */
 @Service
@@ -61,8 +65,9 @@ public class HashShortUrl extends ShortUrlBase {
 
     /**
      * 处理逻辑
-     * @param shortUrl 短链接
-     * @param longUrl  长链接
+     *
+     * @param shortUrl  短链接
+     * @param longUrl   长链接
      * @param originUrl 初始长链接
      * @return
      */
@@ -87,7 +92,7 @@ public class HashShortUrl extends ShortUrlBase {
             // 布隆过滤器不包含的一定不存在
             // 存数据库
             String finalShortUrl = shortUrl;
-            this.taskExecutor.execute(()->{
+            this.taskExecutor.execute(() -> {
                 // fixme 此处 build_type 先写死
                 UrlMapping urlMapping = new UrlMapping().setShortUrl(finalShortUrl).setLongUrl(originUrl).setBuildType(0);
                 FILTER.add(finalShortUrl);
@@ -111,8 +116,43 @@ public class HashShortUrl extends ShortUrlBase {
         longUrl = urlMapping.getLongUrl();
         if (null != urlMapping.getLongUrl()) {
             //数据库有此短链接，添加缓存
-           this.redisTemplate.opsForValue().set(shortUrl, longUrl, TIMEOUT, TimeUnit.HOURS);
+//            this.redisTemplate.opsForValue().set(shortUrl, longUrl, TIMEOUT, TimeUnit.HOURS);
         }
         return longUrl;
+    }
+
+    /**
+     * 带有过期时间的暂时这样
+     * @param url
+     * @param expireTime
+     * @return
+     */
+
+    @Override
+    public String generateShortUrl(String url, Integer expireTime) {
+        this.checkUrl(url);
+        long hash = this.toHash(url);
+        String shortUrl = this.toEncode(hash);
+        return doProcess(shortUrl, url, url, expireTime);
+    }
+
+    protected String doProcess(String shortUrl, String longUrl, String originUrl, Integer expireTime) {
+        if (shortUrl.length() == 1) {
+            longUrl += DUPLICATE;
+            shortUrl = doProcess(toEncode(toHash(longUrl)), longUrl, originUrl, expireTime);
+        } else if (Boolean.TRUE.equals(this.redisTemplate.hasKey(shortUrl))) { // redis 中还有 key ，说明数据库和缓存记录还未删除，需要重新hash
+            longUrl += DUPLICATE;
+            shortUrl = doProcess(toEncode(toHash(longUrl)), longUrl, originUrl, expireTime);
+        } else {
+            String finalShortUrl = shortUrl;
+            this.taskExecutor.execute(() -> {
+                // 指定过期时间
+                UrlMapping urlMapping = new UrlMapping().setShortUrl(finalShortUrl).setLongUrl(originUrl).setBuildType(0).setExpireTime(LocalDateTime.now().plusDays(expireTime));
+                // 存缓存
+                this.redisTemplate.opsForValue().set(finalShortUrl, originUrl, expireTime, TimeUnit.DAYS);
+                super.addUrlMapping(urlMapping);
+            });
+        }
+        return shortUrl;
     }
 }

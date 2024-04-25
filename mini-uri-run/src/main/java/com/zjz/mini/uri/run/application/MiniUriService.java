@@ -19,7 +19,7 @@ public class MiniUriService {
      */
     public String generateShortURL(GenerateUrlReq req) {
         HashShortUrl bean = SpringUtil.getBean(HashShortUrl.class);
-        String shortUrl = bean.generateShortUrl(req.getOriginalUrl());
+        String shortUrl = bean.generateShortUrl(req.getOriginalUrl(), req.getExpireTime());
         return shortUrl;
     }
 

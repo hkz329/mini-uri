@@ -9,11 +9,21 @@
 </head>
 <body>
 <div class="box">
-    <label for="long" class="inp">
-        <input type="text" id="long" placeholder="&nbsp;">
-        <span class="label">长链接</span>
-        <span class="focus-bg"></span>
-    </label>
+    <div>
+        <label for="long" class="inp">
+            <input type="text" id="long" placeholder="&nbsp;">
+            <span class="label">长链接</span>
+            <span class="focus-bg"></span>
+        </label>
+    </div>
+    <div style="margin-top: 15px;margin-bottom: 15px">
+        <label> 有效时间:
+            <input type="radio" id="1" name="expirationTime" value="1" checked> 1天
+            <input type="radio" id="7" name="expirationTime" value="7"> 7天
+            <input type="radio" id="30" name="expirationTime" value="30"> 1个月
+            <input type="radio" id="90" name="expirationTime" value="90"> 3个月
+        </label>
+    </div>
     <button type="button" id="generate">生成短链接</button>
     <div style="text-align: center;">
         <label for="short" class="inp short">
@@ -29,9 +39,12 @@
 <script>
     $('#generate').click(() => {
         let originalUrl = $('#long').val();
+        let expireTime = $("input[name='expirationTime']:checked").val();
         if (originalUrl) {
-            generateUri(originalUrl)
-                .then(res => {
+            generateUri({
+                'originalUrl': originalUrl,
+                'expireTime': expireTime
+            }).then(res => {
                     if (res.code === 200) {
                         $('#short').val(res.data);
                     } else {
