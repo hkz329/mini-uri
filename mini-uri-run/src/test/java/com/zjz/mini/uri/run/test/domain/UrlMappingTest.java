@@ -6,9 +6,14 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +25,6 @@ public class UrlMappingTest {
 
     @Resource
     private UrlMappingMapper urlMappingMapper;
-
 
     @Test
     public void test_insert() {
@@ -37,5 +41,27 @@ public class UrlMappingTest {
     public void test_deleteExpired() {
         int i = this.urlMappingMapper.deleteExpired();
         System.out.println(i);
+    }
+
+    @Test
+    public void test_tx() {
+        do_insert();
+    }
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
+
+    public void do_insert() {
+        UrlMapping entity = new UrlMapping();
+        entity.setBuildType(0);
+        entity.setLongUrl("https://www.zhangjinzhao.com/blog-cicd/#github-action-%E8%87%AA%E5%8A%A8%E6%9E%84%E5%BB%BA%E9%83%A8%E7%BD%B2");
+        entity.setShortUrl("https://www.zhangjinzhao.com/asas12n1n2");
+        entity.setCreateTime(LocalDateTime.now());
+        transactionTemplate.execute(status -> {
+            int insert = this.urlMappingMapper.insert(entity);
+            System.out.println(insert);
+            return null;
+//            throw new RuntimeException();
+        });
     }
 }
