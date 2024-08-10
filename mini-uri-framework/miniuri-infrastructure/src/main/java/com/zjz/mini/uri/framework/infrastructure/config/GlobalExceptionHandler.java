@@ -1,4 +1,4 @@
-package com.zjz.mini.uri.run.infrastructure.config;
+package com.zjz.mini.uri.framework.infrastructure.config;
 
 import com.zjz.mini.uri.framework.common.core.BusinessException;
 import com.zjz.mini.uri.framework.common.core.R;

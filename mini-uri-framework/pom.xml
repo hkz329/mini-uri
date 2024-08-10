@@ -14,6 +14,7 @@
     <modules>
         <module>miniuri-common</module>
         <module>miniuri-spring-boot-starter-mybatis</module>
+        <module>miniuri-infrastructure</module>
     </modules>
 
     <properties>

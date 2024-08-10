@@ -1,14 +1,15 @@
-package com.zjz.mini.uri.run.infrastructure.aop.handler;
+package com.zjz.mini.uri.framework.infrastructure.aop.handler;
 
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zjz.mini.uri.framework.common.core.BusinessException;
-import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
-import com.zjz.mini.uri.run.infrastructure.HttpContextHolder;
-import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
+import com.zjz.mini.uri.framework.infrastructure.HttpContextHolder;
+import com.zjz.mini.uri.framework.infrastructure.aop.annotation.Prevent;
+import com.zjz.mini.uri.framework.infrastructure.aop.dto.GenerateUrlReq;
+import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,14 @@ public class GenShortUrlPreventHandler implements PreventHandler {
     public void handle(Prevent prevent, String methodFullName, Object[] args){
         ServletRequest request = HttpContextHolder.getHttpRequest();
         String clientIP = JakartaServletUtil.getClientIP((HttpServletRequest) request);
-        GenerateUrlReq req =(GenerateUrlReq) args[0];
+        GenerateUrlReq req = null;
+        try {
+            String json = new ObjectMapper().writeValueAsString(args[0]);
+            req = new ObjectMapper().readValue(json, GenerateUrlReq.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+//        GenerateUrlReq req =(GenerateUrlReq) args[0];
         String originalUrl = req.getOriginalUrl();
         long expire = prevent.time();
         String encode = Base64.encode(methodFullName + clientIP + originalUrl);

@@ -1,4 +1,5 @@
-package com.zjz.mini.uri.run.infrastructure.config;
+package com.zjz.mini.uri.framework.infrastructure.config;
+
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

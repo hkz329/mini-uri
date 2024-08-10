@@ -1,14 +1,13 @@
-package com.zjz.mini.uri.run.infrastructure.config;
+package com.zjz.mini.uri.framework.infrastructure.config;
 
-import com.zjz.mini.uri.run.infrastructure.HttpContextHolder;
-import com.zjz.mini.uri.run.infrastructure.MyHttpServletRequestWrapper;
+import com.zjz.mini.uri.framework.infrastructure.HttpContextHolder;
+import com.zjz.mini.uri.framework.infrastructure.MyHttpServletRequestWrapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 

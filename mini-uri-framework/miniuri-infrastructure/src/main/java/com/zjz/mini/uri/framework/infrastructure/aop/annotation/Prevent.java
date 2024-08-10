@@ -1,6 +1,6 @@
-package com.zjz.mini.uri.run.infrastructure.aop.annotation;
+package com.zjz.mini.uri.framework.infrastructure.aop.annotation;
 
-import com.zjz.mini.uri.run.infrastructure.aop.handler.PreventHandler;
+import com.zjz.mini.uri.framework.infrastructure.aop.handler.PreventHandler;
 
 import java.lang.annotation.*;
 

@@ -1,9 +1,10 @@
-package com.zjz.mini.uri.run.infrastructure.aop.aspect;
+package com.zjz.mini.uri.framework.infrastructure.aop.aspect;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.zjz.mini.uri.framework.common.util.JoinPointUtils;
-import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
-import com.zjz.mini.uri.run.infrastructure.aop.handler.PreventHandler;
+
+import com.zjz.mini.uri.framework.infrastructure.aop.annotation.Prevent;
+import com.zjz.mini.uri.framework.infrastructure.aop.handler.PreventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +20,7 @@ import java.lang.reflect.Method;
 @Slf4j
 public class PreventAspect {
 
-    @Pointcut("@annotation(com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent)")
+    @Pointcut("@annotation(com.zjz.mini.uri.framework.infrastructure.aop.annotation.Prevent)")
     public void pointcut() {
     }
 

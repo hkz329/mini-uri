@@ -1,6 +1,7 @@
-package com.zjz.mini.uri.run.infrastructure.aop.handler;
+package com.zjz.mini.uri.framework.infrastructure.aop.handler;
 
-import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
+
+import com.zjz.mini.uri.framework.infrastructure.aop.annotation.Prevent;
 
 /**
  * 防刷策略接口

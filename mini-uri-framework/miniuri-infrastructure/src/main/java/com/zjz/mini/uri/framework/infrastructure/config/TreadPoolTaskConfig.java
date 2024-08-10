@@ -1,4 +1,4 @@
-package com.zjz.mini.uri.run.infrastructure.config;
+package com.zjz.mini.uri.framework.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

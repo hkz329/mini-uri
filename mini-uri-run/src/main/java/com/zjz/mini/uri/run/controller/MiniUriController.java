@@ -1,10 +1,10 @@
 package com.zjz.mini.uri.run.controller;
 
 import com.zjz.mini.uri.framework.common.core.R;
+import com.zjz.mini.uri.framework.infrastructure.aop.annotation.Prevent;
+import com.zjz.mini.uri.framework.infrastructure.aop.handler.GenShortUrlPreventHandler;
 import com.zjz.mini.uri.run.application.MiniUriService;
 import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
-import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
-import com.zjz.mini.uri.run.infrastructure.aop.handler.GenShortUrlPreventHandler;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
