@@ -9,7 +9,7 @@ miniuri:
 # 启动端口
 server:
   port: 8888
-  host: http://miniuri.com/
+  host: ${env.server.host:https://miniuri.com/}
 
 spring:
   application:
