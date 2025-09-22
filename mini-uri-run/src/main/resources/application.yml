@@ -29,11 +29,13 @@ spring:
     redis:
       host: ${env.redis.host}
       timeout: 10s
-      password:
+      username: ${env.redis.username}
+      password: ${env.redis.password}
       database: 0
       port: 6379
       ssl:
         enabled: false
+
 
 --- # mysql
 spring:

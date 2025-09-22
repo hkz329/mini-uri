@@ -32,8 +32,8 @@ RUN apt-get update \
 RUN groupadd -g 1000 miniuri && \
     useradd -m -s /bin/sh -u 1000 -g miniuri miniuri
 
-# 创建应用目录
-RUN mkdir -p /app && chown -R miniuri:miniuri /app
+# 创建应用目录（包含日志目录）
+RUN mkdir -p /app /usr/app/log && chown -R miniuri:miniuri /app /usr/app
 
 # 切换到非root用户
 USER miniuri
