@@ -29,7 +29,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+        <!-- Enable Jetty HTTP/2 (required when server.http2.enabled=true) -->
+        <dependency>
+            <groupId>org.eclipse.jetty.http2</groupId>
+            <artifactId>jetty-http2-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

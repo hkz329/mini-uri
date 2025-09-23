@@ -22,6 +22,9 @@ server:
   forward-headers-strategy: native
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   application:
     name: mini-uri
   web:
