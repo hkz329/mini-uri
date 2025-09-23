@@ -2,6 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>短链接生成</title>
     <!-- 仅保留自定义脚本，使用原生实现 -->
     <script defer th:src="@{/static/js/request.js}"></script>
@@ -19,13 +20,14 @@
             <button id="clear-long" type="button" class="clear-x" aria-label="清除输入">×</button>
         </label>
     </div>
-    <div style="margin-top: 15px;margin-bottom: 15px">
-        <label> 有效时间:
-            <input type="radio" id="1" name="expirationTime" value="1" checked> 1天
-            <input type="radio" id="7" name="expirationTime" value="7"> 7天
-            <input type="radio" id="30" name="expirationTime" value="30"> 1个月
-            <input type="radio" id="90" name="expirationTime" value="90"> 3个月
-        </label>
+    <div class="options">
+        <div class="options-title">有效时间</div>
+        <div class="options-group">
+            <label for="exp-1"><input type="radio" id="exp-1" name="expirationTime" value="1" checked><span>1天</span></label>
+            <label for="exp-7"><input type="radio" id="exp-7" name="expirationTime" value="7"><span>7天</span></label>
+            <label for="exp-30"><input type="radio" id="exp-30" name="expirationTime" value="30"><span>1个月</span></label>
+            <label for="exp-90"><input type="radio" id="exp-90" name="expirationTime" value="90"><span>3个月</span></label>
+        </div>
     </div>
     <button type="button" id="generate">生成短链接</button>
     <div style="text-align: center;">
@@ -34,7 +36,7 @@
             <span class="label">短链接</span>
             <span class="focus-bg"></span>
         </label>
-        <button type="button" id="copy" style="width:100px;">Copy</button>
+        <button type="button" id="copy" class="btn-copy">Copy</button>
     </div>
 </div>
 <script>
@@ -129,3 +131,4 @@
 </script>
 </body>
 </html>
+

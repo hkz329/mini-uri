@@ -12,63 +12,72 @@ body {
     );
     background-size: 200% 200%;
     animation: gradient-move 15s ease alternate infinite;
-    font-family: Roboto;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
 }
 
 @keyframes gradient-move {
-    0% {
-        background-position: 0% 0%;
-    }
-    100% {
-        background-position: 100% 100%;
-    }
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
 }
 
 .box {
-    position: absolute;
+    position: relative;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 16px 32px;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
 }
 
 button {
     width: 100%;
     background-color: #344adb;
     border: 0;
-    padding: 10px 0;
+    padding: 12px 0; /* 更大的触控面积 */
     margin: 10px 0;
     color: #fff;
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
 }
 
-.inp * {
-    box-sizing: border-box;
+/* 仅缩短 “生成短链接” 按钮（桌面端 480px，移动端仍 100%） */
+#generate {
+    width: min(100%, 480px);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+.inp * { box-sizing: border-box; }
 
 .inp {
     display: grid;
     position: relative;
-    margin: auto;
-    width: 800px;
-    border-radius: 3px;
+    margin: 0 auto;
+    width: min(100%, 800px);
+    border-radius: 10px;
     overflow: hidden;
+    backdrop-filter: saturate(120%) blur(0px);
 }
 
 .inp.short {
     display: block;
-    width: 320px;
+    width: min(100%, 480px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .inp .label {
     position: absolute;
-    top: 20px;
+    top: 18px;
     left: 12px;
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.5);
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.55);
     font-weight: 500;
     transform-origin: 0 0;
     transform: translate3d(0, 0, 0);
@@ -78,10 +87,8 @@ button {
 
 .inp .focus-bg {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.05);
     z-index: -1;
     transform: scaleX(0);
@@ -99,75 +106,160 @@ button {
     height: 56px;
     font-size: 16px;
     font-weight: 400;
-    background: rgba(0, 0, 0, 0.02);
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(2px);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.28);
     color: #000;
     transition: all 0.15s ease;
 }
 
 .inp input:hover {
-    background: rgba(0, 0, 0, 0.04);
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
-.inp input:not(:-moz-placeholder-shown) + .label {
-    color: rgba(0, 0, 0, 0.5);
-    transform: translate3d(0, -12px, 0) scale(0.75);
-}
-
-.inp input:not(:-ms-input-placeholder) + .label {
-    color: rgba(0, 0, 0, 0.5);
-    transform: translate3d(0, -12px, 0) scale(0.75);
-}
-
-.inp input:not(:placeholder-shown) + .label {
-    color: rgba(0, 0, 0, 0.5);
+.inp input:not(:placeholder-shown) + .label,
+.inp input:focus + .label {
+    color: rgba(0, 0, 0, 0.6);
     transform: translate3d(0, -12px, 0) scale(0.75);
 }
 
 .inp input:focus {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.7);
     outline: none;
     box-shadow: inset 0 -2px 0 #0077FF;
 }
 
-.inp input:focus + .label {
-    color: #0077FF;
-    transform: translate3d(0, -12px, 0) scale(0.75);
-}
+.inp input:focus + .label { color: #0077FF; }
 
 .inp input:focus + .label + .focus-bg {
     transform: scaleX(1);
     transition: all 0.1s ease;
 }
 
-/* ---- migrated from index.html inline <style> ---- */
 /* Keep extra right padding for input to make room for the clear (×) button */
-.inp input { padding-right: 28px; }
+.inp input { padding-right: 32px; } /* 原 36px，随按钮宽度等比例缩小 */
 
 /* Clear (×) button styles */
 .clear-x {
     position: absolute;
-    right: 8px;
-    top: 35%;
+    right: 6px;             /* 原 8px，等比例缩小贴近输入内容 */
+    top: 35%;               /* 由 50% 调整为 35% */
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    line-height: 18px;
+    width: 24px;            /* 原 26px，等比例缩小 */
+    height: 24px;           /* 原 26px，等比例缩小 */
+    padding: 0;
+    display: inline-flex;    /* 用 inline-flex 居中内容，避免 block 影响 */
+    align-items: center;     /* 垂直居中 × */
+    justify-content: center; /* 水平居中 × */
     text-align: center;
     border-radius: 50%;
     border: none;
     background: transparent;
-    color: #aaa;
-    font-size: 28px;
+    color: #888;
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .15s ease;
+    transition: opacity .15s ease, background-color .15s ease, color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    font-size: 0;            /* 隐藏原始文本，改由伪元素绘制 ×，避免基线差异 */
 }
 
-.clear-x:hover { color: #666; }
+/* 用伪元素绘制 ×，可独立控制其尺寸与微调 */
+.clear-x::before {
+    content: '';
+    width: 14px;            /* X 图标尺寸，居于 24px 圆圈内更协调 */
+    height: 14px;
+    display: block;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6L18 18M6 18L18 6' stroke='currentColor' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    transform: translateY(-1px); /* 细微上移以达到视觉几何居中 */
+}
+
+.clear-x:hover { color: #555; background: rgba(0,0,0,0.06); }
 
 /* Show × when input has value or on focus */
 .inp.has-value .clear-x,
 .inp:focus-within .clear-x { opacity: 1; pointer-events: auto; }
+
+/* Options (radio group) */
+.options { margin: 16px auto; width: min(100%, 800px); font-size: 15px; color: rgba(0,0,0,0.8); }
+.options-title { margin-bottom: 8px; font-weight: 600; color: rgba(0,0,0,0.75); }
+/* Segmented Control 样式：并排等宽、圆角容器、相邻分隔线 */
+.options-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.55);
+}
+/* 每个选项等宽，占满容器 */
+.options-group label {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  padding: 0;
+  cursor: pointer;
+}
+/* 隐藏原生圆形单选外观，保留可访问性 */
+.options-group input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+/* 选项可视面板（调整为更紧凑高度） */
+.options-group label span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px 0;           /* 原 10px 0 → 降低垂直内边距 */
+  min-height: 34px;         /* 原 40px → 更紧凑的控制高度 */
+  color: rgba(0,0,0,0.82);
+  background: transparent;
+  transition: background-color .2s ease, color .2s ease, box-shadow .2s ease, transform .05s ease;
+}
+/* 相邻选项之间的分隔线 */
+.options-group label:not(:first-child) span {
+  border-left: 1px solid rgba(0,0,0,0.12);
+}
+/* 悬停/按压反馈 */
+.options-group label:hover span { background: rgba(255,255,255,0.4); }
+.options-group label:active span { transform: translateY(1px); }
+/* 选中状态 */
+.options-group input[type="radio"]:checked + span {
+  background: #344adb;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px #344adb, 0 1px 6px rgba(52,74,219,0.32);
+}
+/* 键盘聚焦可见（内阴影代替 outline，避免被容器裁剪） */
+.options-group input[type="radio"]:focus-visible + span { box-shadow: inset 0 0 0 2px #344adb; }
+
+/* Copy button next to short input */
+.btn-copy {
+    width: min(100%, 480px);
+    max-width: 480px;
+    margin: 8px auto 0;
+    display: block;
+}
+
+/* Layout fine-tune for small screens */
+@media (max-width: 768px) {
+    .box { padding: 24px 12px 28px; top: auto; transform: none; margin-top: 10vh; }
+    .inp { border-radius: 8px; }
+    .inp input { height: 52px; font-size: 16px; }
+    button { font-size: 16px; padding: 12px 0; border-radius: 8px; }
+}
+
+@media (max-width: 480px) {
+    .box { padding: 20px 10px 24px; margin-top: 8vh; }
+    .inp input { height: 50px; font-size: 16px; }
+    .inp.short, .btn-copy { width: 100%; max-width: none; }
+    .options { font-size: 14px; }
+    .options-group label span { min-height: 32px; padding: 6px 0; } /* 移动端再收紧一点 */
+}
+
+/* Button active feedback */
+button:active { transform: translateY(1px); }
