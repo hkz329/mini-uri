@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>短链接生成</title>
-    <!-- 使用 defer 的方式加载依赖脚本，避免阻塞 HTML 解析；使用 th:src 以启用内容指纹版本策略 -->
-    <script defer th:src="@{/static/js/jquery.min.js}"></script>
-    <script defer th:src="@{/static/js/clipboard.min.js}"></script>
+    <!-- 仅保留自定义脚本，使用原生实现 -->
     <script defer th:src="@{/static/js/request.js}"></script>
     <script defer th:src="@{/static/js/api.js}"></script>
     <link rel="icon" th:href="@{/static/img/favicon.ico}">
@@ -35,42 +33,73 @@
             <span class="label">短链接</span>
             <span class="focus-bg"></span>
         </label>
-        <button type="button" id="copy" style="width:100px;" data-clipboard-action="copy"
-                data-clipboard-target="#short">Copy
-        </button>
+        <button type="button" id="copy" style="width:100px;">Copy</button>
     </div>
 </div>
 <script>
-    // 将逻辑延后到 DOMContentLoaded，确保 defer 脚本（jQuery/ClipboardJS/request/api）已加载执行
     window.addEventListener('DOMContentLoaded', function () {
-        $('#generate').click(() => {
-            let originalUrl = $('#long').val();
-            let expireTime = $("input[name='expirationTime']:checked").val();
-            if (originalUrl) {
-                generateUri({
-                    'originalUrl': originalUrl,
-                    'expireTime': expireTime
-                }).then(res => {
-                        if (res.code === 200) {
-                            $('#short').val(res.data);
-                        } else {
-                            alert(res.msg);
-                        }
-                    }).catch(err => {
-                    alert(err);
-                })
-            } else {
+        const btnGenerate = document.getElementById('generate');
+        const inputLong = document.getElementById('long');
+        const inputShort = document.getElementById('short');
+        const btnCopy = document.getElementById('copy');
+
+        btnGenerate.addEventListener('click', function () {
+            const originalUrl = inputLong.value.trim();
+            const checked = document.querySelector('input[name="expirationTime"]:checked');
+            const expireTime = checked ? checked.value : '1';
+            if (!originalUrl) {
                 alert('请输入原始链接');
+                return;
             }
-        })
-        let clipboard = new ClipboardJS('#copy');
-        clipboard.on('success', function (e) {
-            e.clearSelection();
-            $('#copy').text('Copied!');
-            setTimeout(() => {
-                $('#copy').text('Copy');
-            }, 2000)
+            generateUri({
+                originalUrl: originalUrl,
+                expireTime: expireTime
+            }).then(function (res) {
+                if (res && res.code === 200) {
+                    inputShort.value = res.data || '';
+                } else {
+                    alert(res && (res.msg || res.message) || '生成失败');
+                }
+            }).catch(function (err) {
+                alert(err && err.message ? err.message : String(err));
+            });
         });
+
+        btnCopy.addEventListener('click', function () {
+            const text = inputShort.value || '';
+            if (!text) {
+                alert('没有可复制的内容');
+                return;
+            }
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(text).then(function () {
+                    btnCopy.textContent = 'Copied!';
+                    setTimeout(function () { btnCopy.textContent = 'Copy'; }, 2000);
+                }).catch(function () {
+                    fallbackCopy();
+                });
+            } else {
+                fallbackCopy();
+            }
+        });
+
+        function fallbackCopy() {
+            inputShort.select();
+            try {
+                const ok = document.execCommand('copy');
+                if (ok) {
+                    btnCopy.textContent = 'Copied!';
+                    setTimeout(function () { btnCopy.textContent = 'Copy'; }, 2000);
+                } else {
+                    alert('复制失败，请手动复制');
+                }
+            } catch (e) {
+                alert('复制失败，请手动复制');
+            } finally {
+                window.getSelection && window.getSelection().removeAllRanges();
+                inputShort.blur();
+            }
+        }
     });
 </script>
 </body>

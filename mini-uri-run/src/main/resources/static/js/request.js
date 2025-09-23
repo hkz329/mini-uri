@@ -1,24 +1,32 @@
 /**
- * httpRequest
+ * httpRequest (native fetch)
  */
 const httpRequest = (url, method = 'GET', data = null, customOptions = {}) => {
-    return new Promise((resolve, reject) => {
-        const defaultOptions = {
-            url: url,
-            type: method,
-            contentType: "application/json",
-            dataType: "json",
-            success: resolve,
-            error: (jqXHR, textStatus, errorThrown) => reject(new Error(textStatus)),
-            ...customOptions // 这里允许覆盖默认设置或添加新的设置
-        };
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(customOptions.headers || {})
+    };
 
-        // 如果传递了data，转换为JSON字符串
-        if (data) {
-            defaultOptions.data = JSON.stringify(data);
+    const options = {
+        method,
+        headers,
+        ...customOptions
+    };
+
+    if (data !== null && data !== undefined) {
+        options.body = JSON.stringify(data);
+    }
+
+    return fetch(url, options).then(async (res) => {
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || res.statusText);
         }
-
-        $.ajax(defaultOptions);
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+            return res.json();
+        }
+        return res.text();
     });
 };
 
