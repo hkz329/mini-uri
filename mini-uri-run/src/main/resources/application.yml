@@ -24,7 +24,7 @@ server:
 spring:
   threads:
     virtual:
-      enabled: true
+      enabled: true  # 启用虚拟线程
   application:
     name: mini-uri
   web:
@@ -62,6 +62,12 @@ spring:
       port: 6379
       ssl:
         enabled: false
+      lettuce:
+        pool:
+          max-active: 200
+          max-idle: 50
+          min-idle: 10
+          max-wait: 10s
 
 
 --- # mysql
@@ -74,6 +80,27 @@ spring:
     url: ${env.mysql.url}
     username: ${env.mysql.username}
     password: ${env.mysql.password}
+    
+    # HikariCP 连接池配置（Spring Boot 默认连接池）
+    hikari:
+      # 连接池名称
+      pool-name: HikariCP-MiniUri
+      # 最小空闲连接数
+      minimum-idle: 10
+      # 最大连接池大小
+      maximum-pool-size: 50
+      # 连接超时时间（毫秒）
+      connection-timeout: 30000
+      # 空闲连接超时时间（毫秒）
+      idle-timeout: 600000
+      # 连接最大存活时间（毫秒）
+      max-lifetime: 1800000
+      # 连接测试查询
+      connection-test-query: SELECT 1
+      # 自动提交
+      auto-commit: true
+      # 连接泄漏检测阈值（毫秒）
+      leak-detection-threshold: 60000
 
 # MyBatis Plus 的配置项
 mybatis-plus:

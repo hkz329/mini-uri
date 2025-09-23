@@ -8,7 +8,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * 线程池配置
+ * 混合线程池配置
+ * - HTTP请求：虚拟线程（Spring Boot自动配置）
+ * - 数据库操作：传统线程池（资源有限，需要背压控制）
  * @author hkz329
  */
 @Configuration
@@ -31,26 +33,41 @@ public class TreadPoolTaskConfig {
     /**
      * 缓冲队列大小
      */
-    private static final int queueCapacity = 500;
+    private static final int queueCapacity = 1000;
     /**
-     * 线程池名前缀
+     * 线程池名前缀（保留用于通用任务）
      */
     private static final String threadNamePrefix = "common-io-task";
 
-    @Bean("taskExecutor")
-    public ThreadPoolTaskExecutor taskExecutor() {
+    /**
+     * 数据库操作专用线程池
+     * 特点：有界、可控、与数据库连接池匹配
+     */
+    @Bean("databaseTaskExecutor")
+    public ThreadPoolTaskExecutor databaseTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(keepAliveTime);
-        executor.setThreadNamePrefix(threadNamePrefix);
-        // 拒绝策略
+        executor.setThreadNamePrefix("db-task-");
+        // 数据库操作拒绝策略：调用者运行，避免任务丢失
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // 等待所有任务结束后再关闭线程池
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationMillis(60);
+        // 允许核心线程超时，提高资源利用率
+        executor.setAllowCoreThreadTimeOut(true);
         executor.initialize();
         return executor;
+    }
+
+    /**
+     * 通用任务执行器（保持兼容性）
+     * 实际指向数据库任务执行器
+     */
+    @Bean("taskExecutor")
+    public ThreadPoolTaskExecutor taskExecutor() {
+        return databaseTaskExecutor();
     }
 }
