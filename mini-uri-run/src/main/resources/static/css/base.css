@@ -140,3 +140,34 @@ button {
     transform: scaleX(1);
     transition: all 0.1s ease;
 }
+
+/* ---- migrated from index.html inline <style> ---- */
+/* Keep extra right padding for input to make room for the clear (×) button */
+.inp input { padding-right: 28px; }
+
+/* Clear (×) button styles */
+.clear-x {
+    position: absolute;
+    right: 8px;
+    top: 35%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease;
+}
+
+.clear-x:hover { color: #666; }
+
+/* Show × when input has value or on focus */
+.inp.has-value .clear-x,
+.inp:focus-within .clear-x { opacity: 1; pointer-events: auto; }

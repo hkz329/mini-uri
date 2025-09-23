@@ -12,10 +12,11 @@
 <body>
 <div class="box">
     <div>
-        <label for="long" class="inp">
+        <label for="long" class="inp" id="long-wrapper">
             <input type="text" id="long" placeholder="&nbsp;">
             <span class="label">长链接</span>
             <span class="focus-bg"></span>
+            <button id="clear-long" type="button" class="clear-x" aria-label="清除输入">×</button>
         </label>
     </div>
     <div style="margin-top: 15px;margin-bottom: 15px">
@@ -42,6 +43,30 @@
         const inputLong = document.getElementById('long');
         const inputShort = document.getElementById('short');
         const btnCopy = document.getElementById('copy');
+        const btnClearLong = document.getElementById('clear-long');
+        const longWrapper = document.getElementById('long-wrapper');
+
+        // 根据是否有值切换 has-value 类，控制 × 的显隐
+        const updateHasValue = () => {
+            if (inputLong.value && inputLong.value.trim().length > 0) {
+                longWrapper.classList.add('has-value');
+            } else {
+                longWrapper.classList.remove('has-value');
+            }
+        };
+        inputLong.addEventListener('input', updateHasValue);
+        inputLong.addEventListener('change', updateHasValue);
+        inputLong.addEventListener('focus', updateHasValue);
+        inputLong.addEventListener('blur', updateHasValue);
+        updateHasValue();
+
+        // 点击 × 清除输入
+        btnClearLong.addEventListener('click', function (e) {
+            e.preventDefault();
+            inputLong.value = '';
+            updateHasValue();
+            inputLong.focus();
+        });
 
         btnGenerate.addEventListener('click', function () {
             const originalUrl = inputLong.value.trim();
