@@ -6,8 +6,12 @@ import com.zjz.mini.uri.run.domain.dto.GenerateUrlReq;
 import com.zjz.mini.uri.run.infrastructure.aop.annotation.Prevent;
 import com.zjz.mini.uri.run.infrastructure.aop.handler.GenShortUrlPreventHandler;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +22,7 @@ import java.util.Optional;
  * MiniUriController
  * @author hkz329
  */
-@RestController
+@Controller
 public class MiniUriController {
 
     @Value("${server.host}")
@@ -28,15 +32,29 @@ public class MiniUriController {
     private MiniUriService miniUriService;
 
     /**
+     * 首页：返回 Thymeleaf 模板
+     */
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
+    /**
      * 生成短链
      * @param req
      * @return
      */
     @Prevent(time = 5, message = "5秒内不允许重复生成", strategy = GenShortUrlPreventHandler.class)
+    @ResponseBody
     @PostMapping("/generate")
-    public R generateShortURL(@RequestBody @Validated GenerateUrlReq req) {
+    public R<String> generateShortURL(@RequestBody @Validated GenerateUrlReq req, HttpServletRequest request) {
         String shortURL = miniUriService.generateShortURL(req);
-        return R.ok(host + shortURL);
+        String base = resolveBaseUrl(request);
+        if (base == null || base.isBlank()) {
+            base = host;
+        }
+        String full = joinUrl(base, shortURL);
+        return R.ok(full);
     }
 
     /**
@@ -55,5 +73,20 @@ public class MiniUriController {
             response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
             response.setHeader("Location","/");
         });
+    }
+
+    private String resolveBaseUrl(HttpServletRequest request) {
+        if (request == null) return null;
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    }
+
+    private String joinUrl(String base, String path) {
+        if (path == null || path.isBlank()) return base;
+        if (path.startsWith("http://") || path.startsWith("https://")) return path;
+        if (base == null || base.isBlank()) return path;
+        return UriComponentsBuilder.fromUriString(base)
+                .path(path.startsWith("/") ? path : "/" + path)
+                .build()
+                .toUriString();
     }
 }

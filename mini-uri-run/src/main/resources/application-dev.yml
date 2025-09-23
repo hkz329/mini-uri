@@ -3,6 +3,8 @@ env.mysql.url: jdbc:mysql://127.0.0.1:3306/mini_uri?useUnicode=true&characterEnc
 env.mysql.username: root
 env.mysql.password: 1234
 env.server.host: https://miniuri.com/
+env.redis.username:
+env.redis.password:
 
 management:
   server:

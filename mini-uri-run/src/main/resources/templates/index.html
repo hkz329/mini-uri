@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>短链接生成</title>
-    <script src="/static/js/base.js"></script>
-    <link rel="icon" href="/static/img/favicon.ico">
-    <link rel="stylesheet" href="/static/css/base.css">
+    <!-- 使用 defer 的方式加载依赖脚本，避免阻塞 HTML 解析；使用 th:src 以启用内容指纹版本策略 -->
+    <script defer th:src="@{/static/js/jquery.min.js}"></script>
+    <script defer th:src="@{/static/js/clipboard.min.js}"></script>
+    <script defer th:src="@{/static/js/request.js}"></script>
+    <script defer th:src="@{/static/js/api.js}"></script>
+    <link rel="icon" th:href="@{/static/img/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/static/css/base.css}">
 </head>
 <body>
 <div class="box">
@@ -37,33 +41,36 @@
     </div>
 </div>
 <script>
-    $('#generate').click(() => {
-        let originalUrl = $('#long').val();
-        let expireTime = $("input[name='expirationTime']:checked").val();
-        if (originalUrl) {
-            generateUri({
-                'originalUrl': originalUrl,
-                'expireTime': expireTime
-            }).then(res => {
-                    if (res.code === 200) {
-                        $('#short').val(res.data);
-                    } else {
-                        alert(res.msg);
-                    }
-                }).catch(err => {
-                alert(err);
-            })
-        } else {
-            alert('请输入原始链接');
-        }
-    })
-    let clipboard = new ClipboardJS('#copy');
-    clipboard.on('success', function (e) {
-        e.clearSelection();
-        $('#copy').text('Copied!');
-        setTimeout(() => {
-            $('#copy').text('Copy');
-        }, 2000)
+    // 将逻辑延后到 DOMContentLoaded，确保 defer 脚本（jQuery/ClipboardJS/request/api）已加载执行
+    window.addEventListener('DOMContentLoaded', function () {
+        $('#generate').click(() => {
+            let originalUrl = $('#long').val();
+            let expireTime = $("input[name='expirationTime']:checked").val();
+            if (originalUrl) {
+                generateUri({
+                    'originalUrl': originalUrl,
+                    'expireTime': expireTime
+                }).then(res => {
+                        if (res.code === 200) {
+                            $('#short').val(res.data);
+                        } else {
+                            alert(res.msg);
+                        }
+                    }).catch(err => {
+                    alert(err);
+                })
+            } else {
+                alert('请输入原始链接');
+            }
+        })
+        let clipboard = new ClipboardJS('#copy');
+        clipboard.on('success', function (e) {
+            e.clearSelection();
+            $('#copy').text('Copied!');
+            setTimeout(() => {
+                $('#copy').text('Copy');
+            }, 2000)
+        });
     });
 </script>
 </body>

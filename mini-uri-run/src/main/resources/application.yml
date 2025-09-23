@@ -10,6 +10,16 @@ miniuri:
 server:
   port: 8888
   host: ${env.server.host:https://miniuri.com/}
+  # 启用响应压缩（减少 HTML/CSS/JS/JSON 等体积）
+  compression:
+    enabled: true
+    min-response-size: 1KB
+    mime-types: application/json,application/javascript,text/css,text/html,text/plain,application/xml,application/xhtml+xml,image/svg+xml
+  # 如运行环境支持，启用 HTTP/2（浏览器访问可提升并发与头压缩效率）
+  http2:
+    enabled: true
+  # 让服务器层处理 Forwarded / X-Forwarded-* 头，正确识别外部 scheme/host/port
+  forward-headers-strategy: native
 
 spring:
   application:
@@ -17,8 +27,22 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/
+      # 为静态资源开启强缓存 + 内容指纹（版本策略）
+      cache:
+        cachecontrol:
+          max-age: 365d
+          cache-public: true
+      chain:
+        enabled: true
+        strategy:
+          content:
+            enabled: true
+            paths: /static/**
   mvc:
     static-path-pattern: /static/**
+    # 让 Spring 自动解析 X-Forwarded-* / Forwarded 头，重写请求的 scheme/host/port
+    # 这样 request.getScheme()/getServerName() 等可反映外部地址
+    # forward-headers-strategy: native  # 移到 server.forward-headers-strategy
   thymeleaf:
     encoding: utf-8
     mode: HTML
