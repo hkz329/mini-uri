@@ -13,12 +13,12 @@
 <body>
 <div class="box">
     <div>
-        <label for="long" class="inp" id="long-wrapper">
+        <div class="inp" id="long-wrapper">
             <input type="text" id="long" placeholder="&nbsp;">
-            <span class="label">长链接</span>
+            <label for="long" class="label">长链接</label>
             <span class="focus-bg"></span>
-            <button id="clear-long" type="button" class="clear-x" aria-label="清除输入">×</button>
-        </label>
+            <button id="clear-long" type="button" class="clear-x" aria-label="清除输入" tabindex="-1">×</button>
+        </div>
     </div>
     <div class="options">
         <div class="options-title">有效时间</div>
@@ -62,13 +62,21 @@
         inputLong.addEventListener('blur', updateHasValue);
         updateHasValue();
 
-        // 点击 × 清除输入
-        btnClearLong.addEventListener('click', function (e) {
-            e.preventDefault();
+        // 点击 × 清除输入（封装成函数，供多事件复用）
+        function clearLongNow(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
             inputLong.value = '';
-            updateHasValue();
-            inputLong.focus();
-        });
+            // 触发 input 事件，确保所有监听者（含样式联动）正确响应
+            try { inputLong.dispatchEvent(new Event('input', { bubbles: true })); } catch (_){}
+            // 下一帧再更新 has-value，避免在当前点击过程中立刻把按钮变成不可点导致“清不掉”
+            setTimeout(updateHasValue, 0);
+            inputLong.focus({ preventScroll: true });
+        }
+
+        // 防止按下时切换焦点，避免触发父级状态变化
+        btnClearLong.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        btnClearLong.addEventListener('touchstart', function (e) { clearLongNow(e); }, { passive: false });
+        btnClearLong.addEventListener('click', function (e) { clearLongNow(e); });
 
         btnGenerate.addEventListener('click', function () {
             const originalUrl = inputLong.value.trim();

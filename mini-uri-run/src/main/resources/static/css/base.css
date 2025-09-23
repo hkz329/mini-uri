@@ -143,15 +143,15 @@ button {
 /* Clear (×) button styles */
 .clear-x {
     position: absolute;
-    right: 6px;             /* 原 8px，等比例缩小贴近输入内容 */
-    top: 35%;               /* 由 50% 调整为 35% */
+    right: 6px;
+    top: 50%;                   /* 垂直居中，避免不同高度下偏移造成点击空区 */
     transform: translateY(-50%);
-    width: 24px;            /* 原 26px，等比例缩小 */
-    height: 24px;           /* 原 26px，等比例缩小 */
+    width: 24px;
+    height: 24px;
     padding: 0;
-    display: inline-flex;    /* 用 inline-flex 居中内容，避免 block 影响 */
-    align-items: center;     /* 垂直居中 × */
-    justify-content: center; /* 水平居中 × */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     border-radius: 50%;
     border: none;
@@ -159,12 +159,17 @@ button {
     color: #888;
     cursor: pointer;
     opacity: 0;
-    pointer-events: none;
-    transition: opacity .15s ease, background-color .15s ease, color .15s ease;
+    visibility: hidden;         /* 用可见性控制显示，避免 pointer-events 在点击中途切换 */
+    /* 不再用 pointer-events 切换，统一为可点击，配合 visibility 控制命中 */
+    pointer-events: auto;
+    transition: opacity .15s ease, visibility .15s ease, background-color .15s ease, color .15s ease;
     -webkit-tap-highlight-color: transparent;
-    font-size: 0;            /* 隐藏原始文本，改由伪元素绘制 ×，避免基线差异 */
+    font-size: 0;
+    z-index: 10;                /* 提高层级，确保位于输入之上 */
 }
 
+/* 仅在有值时显示 × */
+.inp.has-value .clear-x { opacity: 1; visibility: visible; }
 /* 用伪元素绘制 ×，可独立控制其尺寸与微调 */
 .clear-x::before {
     content: '';
@@ -177,9 +182,16 @@ button {
 
 .clear-x:hover { color: #555; background: rgba(0,0,0,0.06); }
 
+/* 点击时保持位置不变，覆盖全局 button:active 的 transform */
+.clear-x:active {
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.1);
+}
+
 /* Show × when input has value or on focus */
-.inp.has-value .clear-x,
-.inp:focus-within .clear-x { opacity: 1; pointer-events: auto; }
+.inp.has-value .clear-x { opacity: 1; pointer-events: auto; }
+/* 移除 focus-within 显示，避免点击 × 时焦点切换导致闪烁 */
+/* .inp:focus-within .clear-x { opacity: 1; pointer-events: auto; } */
 
 /* Options (radio group) */
 .options { margin: 16px auto; width: min(100%, 800px); font-size: 15px; color: rgba(0,0,0,0.8); }
