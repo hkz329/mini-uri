@@ -2,8 +2,11 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <!-- SEO优化：添加描述和关键词 -->
+    <title>Mini URI - 免费高效的短链接生成器</title>
+    <meta name="description" content="Mini URI 提供免费、快速、稳定的短链接生成服务，支持自定义有效期，是您简化分享、提升品牌形象的理想选择。">
+    <meta name="keywords" content="短链接,短网址,短链接生成,网址缩短,URL缩短,Mini URI">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>短链接生成</title>
     <!-- 仅保留自定义脚本，使用原生实现 -->
     <script defer th:src="@{/static/js/request.js}"></script>
     <script defer th:src="@{/static/js/api.js}"></script>
@@ -12,16 +15,19 @@
 </head>
 <body>
 <div class="box">
+    <!-- SEO优化：添加H1标签 -->
+    <h1 style="text-align: center; margin-bottom: 20px;">短链接生成器</h1>
     <div>
         <div class="inp" id="long-wrapper">
-            <input type="text" id="long" placeholder="&nbsp;">
+            <input type="text" id="long" placeholder="&nbsp;" aria-label="长链接输入框">
             <label for="long" class="label">长链接</label>
             <span class="focus-bg"></span>
             <button id="clear-long" type="button" class="clear-x" aria-label="清除输入" tabindex="-1">×</button>
         </div>
     </div>
     <div class="options">
-        <div class="options-title">有效时间</div>
+        <!-- SEO优化：添加H2标签 -->
+        <h2 class="options-title">有效时间</h2>
         <div class="options-group">
             <label for="exp-1"><input type="radio" id="exp-1" name="expirationTime" value="1" checked><span>1天</span></label>
             <label for="exp-7"><input type="radio" id="exp-7" name="expirationTime" value="7"><span>7天</span></label>
@@ -32,7 +38,7 @@
     <button type="button" id="generate">生成短链接</button>
     <div style="text-align: center;">
         <label for="short" class="inp short">
-            <input type="text" id="short" placeholder="&nbsp;">
+            <input type="text" id="short" placeholder="&nbsp;" aria-label="短链接输出框" readonly>
             <span class="label">短链接</span>
             <span class="focus-bg"></span>
         </label>
@@ -66,6 +72,7 @@
         function clearLongNow(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             inputLong.value = '';
+            inputShort.value = '';
             // 触发 input 事件，确保所有监听者（含样式联动）正确响应
             try { inputLong.dispatchEvent(new Event('input', { bubbles: true })); } catch (_){}
             // 下一帧再更新 has-value，避免在当前点击过程中立刻把按钮变成不可点导致“清不掉”
