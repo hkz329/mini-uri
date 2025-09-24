@@ -85,14 +85,40 @@
         btnClearLong.addEventListener('touchstart', function (e) { clearLongNow(e); }, { passive: false });
         btnClearLong.addEventListener('click', function (e) { clearLongNow(e); });
 
+        // 防抖处理和按钮状态管理
+        let isGenerating = false;
+        const originalButtonText = btnGenerate.textContent;
+
+        function setButtonLoading(loading) {
+            if (loading) {
+                btnGenerate.disabled = true;
+                btnGenerate.textContent = '生成中...';
+                isGenerating = true;
+            } else {
+                btnGenerate.disabled = false;
+                btnGenerate.textContent = originalButtonText;
+                isGenerating = false;
+            }
+        }
+
         btnGenerate.addEventListener('click', function () {
+            // 防止重复点击
+            if (isGenerating) {
+                return;
+            }
+
             const originalUrl = inputLong.value.trim();
             const checked = document.querySelector('input[name="expirationTime"]:checked');
             const expireTime = checked ? checked.value : '1';
+            
             if (!originalUrl) {
                 alert('请输入原始链接');
                 return;
             }
+
+            // 设置按钮为加载状态
+            setButtonLoading(true);
+
             generateUri({
                 originalUrl: originalUrl,
                 expireTime: expireTime
@@ -104,6 +130,9 @@
                 }
             }).catch(function (err) {
                 alert(err && err.message ? err.message : String(err));
+            }).finally(function () {
+                // 无论成功还是失败，都要恢复按钮状态
+                setButtonLoading(false);
             });
         });
 
