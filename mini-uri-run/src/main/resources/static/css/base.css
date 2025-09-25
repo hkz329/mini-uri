@@ -201,12 +201,18 @@ button:disabled {
     transform: translateY(-1px); /* 细微上移以达到视觉几何居中 */
 }
 
-.clear-x:hover { color: #555; background: rgba(0,0,0,0.06); }
+button.clear-x:hover {
+    color: #555;
+    background: rgba(0, 0, 0, 0.06);
+    transform: translateY(-50%); /* 覆盖 button:hover transform */
+    box-shadow: none; /* 覆盖 button:hover box-shadow */
+}
 
 /* 点击时保持位置不变，覆盖全局 button:active 的 transform */
-.clear-x:active {
+button.clear-x:active {
     transform: translateY(-50%);
     background: rgba(0,0,0,0.1);
+    box-shadow: none;
 }
 
 /* Show × when input has value or on focus */
