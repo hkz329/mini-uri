@@ -45,6 +45,77 @@
         <button type="button" id="copy" class="btn-copy">Copy</button>
     </div>
 </div>
+
+<!-- 页脚区域 -->
+<footer class="footer">
+    <div class="footer-content">
+        <!-- 赞赏码区域 -->
+        <div class="appreciation-section">
+            <h3>支持我们</h3>
+            <p>如果这个工具对您有帮助，欢迎请我们喝杯咖啡 ☕</p>
+            <div class="qr-container">
+                <div class="qr-code" id="qr-code">
+                    <!-- 懒加载的赞赏码图片 -->
+                    <div class="qr-image-container">
+                        <div class="qr-placeholder" id="qr-placeholder">
+                            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="120" height="120" rx="8" fill="#f3f4f6"/>
+                                <path d="M60 30C43.4315 30 30 43.4315 30 60C30 76.5685 43.4315 90 60 90C76.5685 90 90 76.5685 90 60C90 43.4315 76.5685 30 60 30ZM60 35C73.8071 35 85 46.1929 85 60C85 73.8071 73.8071 85 60 85C46.1929 85 35 73.8071 35 60C35 46.1929 46.1929 35 60 35Z" fill="#6b7280"/>
+                                <circle cx="60" cy="60" r="8" fill="#6b7280"/>
+                            </svg>
+                            <p class="qr-text">赞赏码</p>
+                        </div>
+                        <div class="qr-loading" id="qr-loading" style="display: none;">
+                            <div class="loading-spinner"></div>
+                            <p>加载中...</p>
+                        </div>
+                        <img
+                            class="qr-image lazy-load"
+                            id="qr-image"
+                            th:attr="data-src=@{/static/img/zanshang.png}"
+                            alt="赞赏码"
+                            style="display: none;"
+                        />
+                    </div>
+                </div>
+                <button type="button" class="btn-show-qr" onclick="toggleQRCode()">显示赞赏码</button>
+            </div>
+        </div>
+
+        <!-- 免责声明和版权信息 -->
+        <div class="legal-section">
+            <div class="disclaimer">
+                <h4>免责声明</h4>
+                <p>本服务仅提供网址缩短功能，不对链接内容负责。用户应确保所缩短的链接内容合法合规，不得用于违法违规用途。使用本服务即表示您同意承担相应责任。</p>
+            </div>
+
+            <div class="terms">
+                <h4>使用条款</h4>
+                <ul>
+                    <li>禁止缩短包含恶意软件、病毒或其他有害内容的链接</li>
+                    <li>禁止用于垃圾邮件、钓鱼或其他欺诈活动</li>
+                    <li>我们保留删除违规链接的权利</li>
+                    <li>服务可能因维护或其他原因暂时中断</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 版权信息 -->
+        <div class="copyright">
+            <div class="copyright-main">
+                <p>&copy; 2025 Mini URI. 保留所有权利。</p>
+            </div>
+            <div class="links">
+                <a href="#" onclick="showPrivacyPolicy()">隐私政策</a>
+                <span class="separator">|</span>
+                <a href="#" onclick="showServiceTerms()">服务条款</a>
+                <span class="separator">|</span>
+                <a href="#" onclick="showContact()">联系我们</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
 <script>
     window.addEventListener('DOMContentLoaded', function () {
         const btnGenerate = document.getElementById('generate');
@@ -110,7 +181,7 @@
             const originalUrl = inputLong.value.trim();
             const checked = document.querySelector('input[name="expirationTime"]:checked');
             const expireTime = checked ? checked.value : '1';
-            
+
             if (!originalUrl) {
                 alert('请输入原始链接');
                 return;
@@ -170,6 +241,82 @@
                 window.getSelection && window.getSelection().removeAllRanges();
                 inputShort.blur();
             }
+        }
+    });
+
+    // 懒加载功能
+    let qrImageLoaded = false;
+
+    function loadQRImage() {
+        if (qrImageLoaded) return;
+
+        const qrImage = document.getElementById('qr-image');
+        const qrPlaceholder = document.getElementById('qr-placeholder');
+        const qrLoading = document.getElementById('qr-loading');
+        const dataSrc = qrImage.getAttribute('data-src');
+
+        if (!dataSrc) {
+            console.error('图片 data-src 未设置');
+            return;
+        }
+
+        // 显示加载状态
+        qrLoading.style.display = 'flex';
+
+        qrImage.onload = function() {
+            // 图片加载完成
+            qrImageLoaded = true;
+            qrPlaceholder.style.opacity = '0';
+            qrLoading.style.display = 'none';
+            qrImage.style.display = 'block';
+            qrImage.classList.add('loaded');
+        };
+
+        qrImage.onerror = function() {
+            // 图片加载失败，隐藏加载状态，保持占位符
+            qrLoading.style.display = 'none';
+            console.warn('赞赏码图片加载失败');
+        };
+
+        // 开始加载图片
+        qrImage.src = dataSrc;
+    }
+
+    // 页脚功能函数
+    window.toggleQRCode = function() {
+        const qrCode = document.getElementById('qr-code');
+        const button = document.querySelector('.btn-show-qr');
+
+        if (qrCode.style.display === 'none' || qrCode.style.display === '') {
+            qrCode.style.display = 'block';
+            button.textContent = '隐藏赞赏码';
+
+            // 当显示赞赏码时，直接加载图片
+            loadQRImage();
+        } else {
+            qrCode.style.display = 'none';
+            button.textContent = '显示赞赏码';
+        }
+    };
+
+    window.showPrivacyPolicy = function() {
+        alert('隐私政策：\n\n我们重视您的隐私保护。本服务不会收集您的个人敏感信息，仅记录必要的使用统计数据以改善服务质量。我们承诺不会将您的数据分享给第三方。');
+    };
+
+    window.showServiceTerms = function() {
+        alert('服务条款：\n\n1. 本服务免费提供，但我们保留调整服务内容的权利\n2. 用户需对自己的行为负责\n3. 禁止滥用服务进行违法活动\n4. 我们保留终止服务的权利\n\n详细条款请联系我们获取。');
+    };
+
+    window.showContact = function() {
+        alert('联系我们：\n\n如有问题或建议，请通过以下方式联系：\n\n邮箱：zhang32912@gmail.com\n\n我们会尽快回复您的消息。');
+    };
+
+    // 初始化页脚
+    document.addEventListener('DOMContentLoaded', function() {
+        // 隐藏赞赏码
+        const qrCode = document.getElementById('qr-code');
+        if (qrCode) {
+            qrCode.style.display = 'none';
         }
     });
 </script>
