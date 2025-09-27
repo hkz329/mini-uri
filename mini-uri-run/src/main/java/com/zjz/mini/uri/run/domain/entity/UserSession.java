@@ -1,22 +1,23 @@
 package com.zjz.mini.uri.run.domain.entity;
 
-
 import com.baomidou.mybatisplus.annotation.*;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
- * url 映射表
+ * 用户会话表
  *
- * @TableName url_mapping
+ * @TableName user_session
+ * @author hkz329
  */
-@TableName(value = "url_mapping")
+@TableName(value = "user_session")
 @Data
 @Accessors(chain = true)
-public class UrlMapping implements Serializable {
+public class UserSession implements Serializable {
+    
     /**
      * 主键
      */
@@ -24,28 +25,34 @@ public class UrlMapping implements Serializable {
     private Long id;
 
     /**
-     * 长链接
-     */
-    @TableField(value = "long_url")
-    private String longUrl;
-
-    /**
-     * 短链接
-     */
-    @TableField(value = "short_url")
-    private String shortUrl;
-
-    /**
-     * 生成类型
-     */
-    @TableField(value = "build_type")
-    private Integer buildType;
-
-    /**
-     * 用户ID，匿名用户为NULL
+     * 用户ID
      */
     @TableField(value = "user_id")
     private Long userId;
+
+    /**
+     * 会话ID
+     */
+    @TableField(value = "session_id")
+    private String sessionId;
+
+    /**
+     * 设备信息
+     */
+    @TableField(value = "device_info")
+    private String deviceInfo;
+
+    /**
+     * IP地址
+     */
+    @TableField(value = "ip_address")
+    private String ipAddress;
+
+    /**
+     * 用户代理
+     */
+    @TableField(value = "user_agent")
+    private String userAgent;
 
     /**
      * 过期时间
@@ -62,10 +69,9 @@ public class UrlMapping implements Serializable {
     /**
      * 更新时间
      */
-    @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
-
 }

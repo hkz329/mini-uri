@@ -16,10 +16,45 @@
     ></script>
     <script defer th:src="@{/static/js/request.js}"></script>
     <script defer th:src="@{/static/js/api.js}"></script>
+    <script defer th:src="@{/static/js/auth.js}"></script>
     <link rel="icon" th:href="@{/static/img/favicon.ico}">
     <link rel="stylesheet" th:href="@{/static/css/base.css}">
+    <link rel="stylesheet" th:href="@{/static/css/user-nav.css}">
 </head>
 <body>
+<!-- 用户导航栏 -->
+<nav class="user-nav">
+    <div class="nav-content">
+        <div class="nav-left">
+            <a href="/" class="logo">Mini URI</a>
+        </div>
+        <div class="nav-right">
+            <!-- 未登录状态 -->
+            <div class="auth-buttons" id="auth-buttons" style="display: none;">
+                <a href="/auth/login" class="nav-btn login-btn">登录/注册</a>
+            </div>
+            
+            <!-- 已登录状态 -->
+            <div class="user-menu" id="user-menu" style="display: none;">
+                <div class="user-info">
+                    <span class="user-display"></span>
+                    <span class="user-type"></span>
+                </div>
+                <div class="user-dropdown">
+                    <button class="dropdown-toggle" onclick="toggleUserDropdown()">▼</button>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="/dashboard">我的短链</a>
+                        <a href="/profile">个人设置</a>
+                        <a href="/upgrade">升级账户</a>
+                        <hr>
+                        <a href="#" class="logout-btn">退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
 <div class="box">
     <!-- SEO优化：添加H1标签 -->
     <h1 style="text-align: center; margin-bottom: 20px;">短链接生成器</h1>
@@ -317,14 +352,50 @@
         alert('联系我们：\n\n如有问题或建议，请通过以下方式联系：\n\n邮箱：zhang32912@gmail.com\n\n我们会尽快回复您的消息。');
     };
 
-    // 初始化页脚
+    // 用户导航功能
+    window.toggleUserDropdown = function() {
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        dropdownMenu.classList.toggle('show');
+    };
+
+    // 点击其他地方关闭下拉菜单
+    document.addEventListener('click', function(e) {
+        const userDropdown = document.querySelector('.user-dropdown');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        
+        if (userDropdown && !userDropdown.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+
+    // 初始化页面
     document.addEventListener('DOMContentLoaded', function() {
         // 隐藏赞赏码
         const qrCode = document.getElementById('qr-code');
         if (qrCode) {
             qrCode.style.display = 'none';
         }
+        
+        // 初始化用户状态显示
+        initUserNavigation();
     });
+
+    // 初始化用户导航状态
+    function initUserNavigation() {
+        const authButtons = document.getElementById('auth-buttons');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (isLoggedIn()) {
+            // 已登录，显示用户菜单
+            authButtons.style.display = 'none';
+            userMenu.style.display = 'flex';
+            displayUserInfo();
+        } else {
+            // 未登录，显示登录注册按钮
+            authButtons.style.display = 'flex';
+            userMenu.style.display = 'none';
+        }
+    }
 </script>
 </body>
 </html>

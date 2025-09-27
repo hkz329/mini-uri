@@ -37,13 +37,13 @@ public class MiniUriController {
     @Resource
     private MiniUriService miniUriService;
 
-    /**
-     * 首页：返回 Thymeleaf 模板
-     */
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
+//    /**
+//     * 首页：返回 Thymeleaf 模板
+//     */
+//    @GetMapping("/")
+//    public String index() {
+//        return "index";
+//    }
 
     /**
      * 生成短链

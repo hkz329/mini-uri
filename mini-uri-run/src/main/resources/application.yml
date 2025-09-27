@@ -5,6 +5,11 @@ miniuri:
     base-package: com.zjz.mini.uri.run
   cache:
     timeout: 1
+  auth:
+    jwt:
+      secret: miniuri-secret-key-for-jwt-token-generation-2025-very-long-secret
+      access-token-expire: 7200  # 访问令牌过期时间（秒），2小时
+      refresh-token-expire: 604800  # 刷新令牌过期时间（秒），7天
 
 # 启动端口
 server:

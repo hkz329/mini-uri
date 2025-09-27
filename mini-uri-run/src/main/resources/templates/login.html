@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册登录 - Mini URI</title>
+    <meta name="description" content="Mini URI 用户登录注册页面">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="icon" th:href="@{/static/img/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/static/css/base.css}">
+    <link rel="stylesheet" th:href="@{/static/css/auth.css}">
+    <script defer th:src="@{/static/js/request.js}"></script>
+    <script defer th:src="@{/static/js/auth.js}"></script>
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-header">
+            <h1>注册登录</h1>
+        </div>
+
+        <!-- 标签切换 -->
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">用户登录</div>
+            <div class="auth-tab" data-tab="register">立即注册</div>
+            <div class="auth-tab" data-tab="qr">扫码登录</div>
+        </div>
+
+        <!-- 登录表单 -->
+        <div id="login-content" class="tab-content active">
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="loginKey" name="loginKey" placeholder="手机号或邮箱" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="密码" required>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe">记住我</label>
+                    </div>
+                    <a href="/forgot-password" class="forgot-password">忘记密码?</a>
+                </div>
+
+                <button type="submit" class="auth-btn" id="login-btn">登录</button>
+            </form>
+        </div>
+
+        <!-- 注册表单 -->
+        <div id="register-content" class="tab-content">
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="username" name="username" placeholder="用户名" required>
+                    <div class="validation-msg" id="username-msg"></div>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="reg-password" name="password" placeholder="密码" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="确认密码" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="邮箱（可选）">
+                    <div class="validation-msg" id="email-msg"></div>
+                </div>
+
+                <div class="form-group">
+                    <input type="tel" id="phone" name="phone" placeholder="手机号（可选）">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="nickname" name="nickname" placeholder="昵称（可选）">
+                </div>
+
+                <button type="submit" class="auth-btn" id="register-btn">注册</button>
+            </form>
+        </div>
+
+        <!-- 扫码登录 -->
+        <div id="qr-content" class="tab-content">
+            <div class="qr-login">
+                <div class="qr-code">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjlGOUY5Ii8+Cjx0ZXh0IHg9IjkwIiB5PSI5MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIj7miavnoIHnoIHnlKjnmbvlvZU8L3RleHQ+Cjwvc3ZnPgo=" alt="二维码">
+                </div>
+                <div class="qr-tips">微信扫码登录</div>
+            </div>
+        </div>
+
+
+        <div class="third-party-login" style="display: none">
+            <a href="#" class="social-btn google" onclick="loginWithGoogle()" title="Google登录">G</a>
+            <a href="#" class="social-btn github" onclick="loginWithGitHub()" title="GitHub登录">⚡</a>
+            <a href="#" class="social-btn weibo" onclick="loginWithWeibo()" title="微博登录">微</a>
+            <a href="#" class="social-btn qq" onclick="loginWithQQ()" title="QQ登录">Q</a>
+            <a href="#" class="social-btn wechat" onclick="loginWithWeChat()" title="微信登录">微</a>
+        </div>
+
+        <div class="back-home">
+            <a href="/">← 返回首页</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// 标签切换功能
+function switchTab(tab) {
+    // 移除所有active类
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+    // 激活当前标签和内容
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    document.getElementById(`${tab}-content`).classList.add('active');
+}
+
+// 为标签添加点击事件
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginBtn = document.getElementById('login-btn');
+    const registerBtn = document.getElementById('register-btn');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+
+    // 标签点击事件
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabType = this.getAttribute('data-tab');
+            switchTab(tabType);
+        });
+    });
+
+    // 登录表单提交
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(loginForm);
+            const loginData = {
+                loginKey: formData.get('loginKey'),
+                password: formData.get('password'),
+                rememberMe: formData.get('rememberMe') === 'on'
+            };
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    localStorage.setItem('accessToken', data.data.accessToken);
+                    localStorage.setItem('refreshToken', data.data.refreshToken);
+                    localStorage.setItem('userInfo', JSON.stringify(data.data.userInfo));
+
+                    alert('登录成功！');
+                    const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/';
+                    window.location.href = redirectUrl;
+                } else {
+                    alert(data.msg || '登录失败');
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                alert('登录失败，请稍后重试');
+            })
+            .finally(() => {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '登录';
+            });
+        });
+    }
+
+    // 注册表单提交
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(registerForm);
+            const registerData = {
+                username: formData.get('username'),
+                password: formData.get('password'),
+                confirmPassword: formData.get('confirmPassword'),
+                email: formData.get('email') || null,
+                phone: formData.get('phone') || null,
+                nickname: formData.get('nickname') || null
+            };
+
+            if (registerData.password !== registerData.confirmPassword) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+
+            if (registerData.password.length < 6) {
+                alert('密码长度至少6位');
+                return;
+            }
+
+            registerBtn.disabled = true;
+            registerBtn.textContent = '注册中...';
+
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registerData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    localStorage.setItem('accessToken', data.data.accessToken);
+                    localStorage.setItem('refreshToken', data.data.refreshToken);
+                    localStorage.setItem('userInfo', JSON.stringify(data.data.userInfo));
+
+                    alert('注册成功！');
+                    window.location.href = '/';
+                } else {
+                    alert(data.msg || '注册失败');
+                }
+            })
+            .catch(error => {
+                console.error('Register error:', error);
+                alert('注册失败，请稍后重试');
+            })
+            .finally(() => {
+                registerBtn.disabled = false;
+                registerBtn.textContent = '注册';
+            });
+        });
+    }
+
+    // 用户名实时验证
+    let usernameCheckTimeout;
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function() {
+            clearTimeout(usernameCheckTimeout);
+            const username = this.value.trim();
+
+            if (username.length >= 3) {
+                usernameCheckTimeout = setTimeout(() => {
+                    checkUsername(username);
+                }, 500);
+            } else {
+                document.getElementById('username-msg').textContent = '';
+            }
+        });
+    }
+
+    // 邮箱实时验证
+    let emailCheckTimeout;
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            clearTimeout(emailCheckTimeout);
+            const email = this.value.trim();
+
+            if (email && email.includes('@')) {
+                emailCheckTimeout = setTimeout(() => {
+                    checkEmail(email);
+                }, 500);
+            } else {
+                document.getElementById('email-msg').textContent = '';
+            }
+        });
+    }
+});
+
+function checkUsername(username) {
+    fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`)
+        .then(response => response.json())
+        .then(data => {
+            const msgElement = document.getElementById('username-msg');
+            if (data.code === 200) {
+                if (data.data.available) {
+                    msgElement.textContent = '✓ 用户名可用';
+                    msgElement.className = 'validation-msg success';
+                } else {
+                    msgElement.textContent = '✗ 用户名已存在';
+                    msgElement.className = 'validation-msg error';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Check username error:', error);
+        });
+}
+
+function checkEmail(email) {
+    fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`)
+        .then(response => response.json())
+        .then(data => {
+            const msgElement = document.getElementById('email-msg');
+            if (data.code === 200) {
+                if (data.data.available) {
+                    msgElement.textContent = '✓ 邮箱可用';
+                    msgElement.className = 'validation-msg success';
+                } else {
+                    msgElement.textContent = '✗ 邮箱已被注册';
+                    msgElement.className = 'validation-msg error';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Check email error:', error);
+        });
+}
+
+// 第三方登录函数
+function loginWithGoogle() {
+    alert('Google登录功能即将上线，敬请期待！');
+}
+
+function loginWithGitHub() {
+    alert('GitHub登录功能即将上线，敬请期待！');
+}
+
+function loginWithWeChat() {
+    alert('微信登录功能即将上线，敬请期待！');
+}
+
+function loginWithWeibo() {
+    alert('微博登录功能即将上线，敬请期待！');
+}
+
+function loginWithQQ() {
+    alert('QQ登录功能即将上线，敬请期待！');
+}
+</script>
+</body>
+</html>
