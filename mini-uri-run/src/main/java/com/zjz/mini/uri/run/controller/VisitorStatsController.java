@@ -55,7 +55,7 @@ public class VisitorStatsController {
      * @return 总PV和总UV
      */
     @GetMapping("/total")
-    public R<Map<String, Long>> getTotalStats(@RequestParam(defaultValue = "/") String pagePath) {
+    public R<Map<String, Long>> getTotalStats(@RequestParam(defaultValue = "/",name = "pagePath") String pagePath) {
         Map<String, Long> stats = visitorStatsService.getTotalStats(pagePath);
         return R.ok(stats);
     }
@@ -72,16 +72,16 @@ public class VisitorStatsController {
             @RequestParam(defaultValue = "/") String pagePath,
             @RequestParam(defaultValue = "7") int days) {
         Map<String, Object> result = new HashMap<>();
-        
+
         // 今日数据
         result.put("today", visitorStatsService.getTodayStats(pagePath));
-        
+
         // 历史数据
         result.put("history", visitorStatsService.getStats(pagePath, days));
-        
+
         // 总计数据
         result.put("total", visitorStatsService.getTotalStats(pagePath));
-        
+
         return R.ok(result);
     }
 

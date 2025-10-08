@@ -1,5 +1,8 @@
 package com.zjz.mini.uri.run.application;
 
+
+import cn.hutool.extra.servlet.JakartaServletUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjz.mini.uri.run.domain.dao.VisitorLogMapper;
 import com.zjz.mini.uri.run.domain.dao.VisitorStatsMapper;
@@ -45,12 +48,18 @@ public class VisitorStatsService {
 
     /**
      * 记录访问（异步处理，不影响页面响应）
+     * 使用虚拟线程执行器，支持高并发访问记录
+     *
+     * 性能优势：
+     * 1. 虚拟线程轻量级，可以承载数十万并发请求
+     * 2. 自动调度，无需手动管理线程池
+     * 3. IO操作（Redis/数据库）时自动让出CPU，高效利用资源
      *
      * @param pagePath 页面路径
      * @param pageName 页面名称
      * @param request  请求对象
      */
-    @Async
+    @Async("namedVirtualThreadExecutor")
     public void recordVisit(String pagePath, String pageName, HttpServletRequest request) {
         try {
             String today = LocalDate.now().toString();
@@ -68,10 +77,7 @@ public class VisitorStatsService {
             stringRedisTemplate.expire(uvKey, 7, TimeUnit.DAYS);
 
             // 3. 记录访问日志（可选，用于详细分析）
-            // addedCount > 0 表示是新访客
-            if (addedCount != null && addedCount > 0) {
-                recordVisitorLog(pagePath, visitorId, request);
-            }
+            recordVisitorLog(pagePath, visitorId, request);
 
             log.debug("记录访问: page={}, visitor={}, isNew={}", pagePath, visitorId, addedCount != null && addedCount > 0);
         } catch (Exception e) {
@@ -99,37 +105,49 @@ public class VisitorStatsService {
 
     /**
      * 同步 Redis 数据到 MySQL（定时任务调用）
-     * 建议每天凌晨执行一次
+     * 建议每天凌晨执行一次，同步前一天的完整数据
      */
     @Transactional(rollbackFor = Exception.class)
     public void syncStatsToDatabase() {
-        try {
-            log.info("开始同步访问统计数据到数据库...");
-            String today = LocalDate.now().toString();
+        // 同步前一天的数据（凌晨1点执行时，同步昨天整天的数据）
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        syncStatsByDate(yesterday);
+    }
 
-            // 扫描所有PV的Key
-            Set<String> pvKeys = stringRedisTemplate.keys(REDIS_KEY_PREFIX_PV + "*:" + today);
+    /**
+     * 同步指定日期的统计数据
+     *
+     * @param targetDate 目标日期
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void syncStatsByDate(LocalDate targetDate) {
+        try {
+            log.info("开始同步访问统计数据到数据库，日期: {}", targetDate);
+            String dateStr = targetDate.toString();
+
+            // 扫描指定日期的所有PV Key
+            Set<String> pvKeys = stringRedisTemplate.keys(REDIS_KEY_PREFIX_PV + "*:" + dateStr);
             if (pvKeys == null || pvKeys.isEmpty()) {
-                log.info("没有需要同步的数据");
+                log.info("没有需要同步的数据，日期: {}", dateStr);
                 return;
             }
 
             int successCount = 0;
             for (String pvKey : pvKeys) {
                 try {
-                    // 解析 Key: visitor:pv:/index:2025-10-06
+                    // 解析 Key: visitor:pv:/index:2025-10-07
                     String[] parts = pvKey.split(":");
                     if (parts.length < 4) continue;
 
                     String pagePath = parts[2];
-                    String dateStr = parts[3];
-                    LocalDate statDate = LocalDate.parse(dateStr);
+                    String keyDateStr = parts[3];
+                    LocalDate statDate = LocalDate.parse(keyDateStr);
 
                     // 获取PV和UV
                     String pvValue = stringRedisTemplate.opsForValue().get(pvKey);
                     Long pv = pvValue != null ? Long.parseLong(pvValue) : 0L;
 
-                    String uvKey = REDIS_KEY_PREFIX_UV + pagePath + ":" + dateStr;
+                    String uvKey = REDIS_KEY_PREFIX_UV + pagePath + ":" + keyDateStr;
                     Long uv = stringRedisTemplate.opsForSet().size(uvKey);
                     if (uv == null) uv = 0L;
 
@@ -159,11 +177,31 @@ public class VisitorStatsService {
                     log.error("同步单条数据失败: key={}", pvKey, e);
                 }
             }
-            log.info("访问统计数据同步完成，成功同步 {} 条记录", successCount);
+            log.info("访问统计数据同步完成，日期: {}，成功同步 {} 条记录", dateStr, successCount);
         } catch (Exception e) {
-            log.error("同步访问统计数据失败", e);
+            log.error("同步访问统计数据失败，日期: {}", targetDate, e);
             throw e;
         }
+    }
+
+    /**
+     * 补偿同步：同步最近N天的数据（用于数据修复）
+     *
+     * @param days 最近N天
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void syncRecentDays(int days) {
+        log.info("开始补偿同步最近 {} 天的数据", days);
+        LocalDate today = LocalDate.now();
+        for (int i = 1; i <= days; i++) {
+            LocalDate date = today.minusDays(i);
+            try {
+                syncStatsByDate(date);
+            } catch (Exception e) {
+                log.error("补偿同步失败，日期: {}", date, e);
+            }
+        }
+        log.info("补偿同步完成");
     }
 
     /**
@@ -239,24 +277,7 @@ public class VisitorStatsService {
      * 获取客户端真实IP
      */
     private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        // 处理多IP情况，取第一个
-        if (ip != null && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
-        }
-        return ip;
+        return JakartaServletUtil.getClientIP(request);
     }
 
     /**

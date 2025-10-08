@@ -22,7 +22,7 @@ public class VirtualThreadConfig {
     public Executor cacheTaskExecutor() {
         return Executors.newVirtualThreadPerTaskExecutor();
     }
-    
+
     /**
      * 通用I/O操作虚拟线程执行器
      * 适用于文件读取、网络请求等非数据库操作
@@ -30,5 +30,18 @@ public class VirtualThreadConfig {
     @Bean("ioTaskExecutor")
     public Executor ioTaskExecutor() {
         return Executors.newVirtualThreadPerTaskExecutor();
+    }
+
+    /**
+     * 创建一个带线程名称的虚拟线程执行器（用于调试和监控）
+     * 为虚拟线程设置有意义的名称，便于排查问题
+     */
+    @Bean("namedVirtualThreadExecutor")
+    public Executor namedVirtualThreadExecutor() {
+        return Executors.newThreadPerTaskExecutor(
+            Thread.ofVirtual()
+                .name("visitor-stats-vt-", 0)
+                .factory()
+        );
     }
 }
