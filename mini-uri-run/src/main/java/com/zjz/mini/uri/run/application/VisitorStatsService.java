@@ -2,7 +2,6 @@ package com.zjz.mini.uri.run.application;
 
 
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjz.mini.uri.run.domain.dao.VisitorLogMapper;
 import com.zjz.mini.uri.run.domain.dao.VisitorStatsMapper;
@@ -47,23 +46,48 @@ public class VisitorStatsService {
     private static final String REDIS_KEY_PREFIX_UV = "visitor:uv:";
 
     /**
-     * 记录访问（异步处理，不影响页面响应）
-     * 使用虚拟线程执行器，支持高并发访问记录
+     * 记录访问（主线程调用，提取必要信息后异步处理）
+     *
+     * 设计说明：
+     * 1. 在主线程中提取 HttpServletRequest 的信息（IP、UA、Referer等）
+     * 2. 调用异步方法在虚拟线程中执行 IO 操作
+     * 3. 避免在虚拟线程中访问 request 对象导致 NPE
+     *
+     * @param pagePath 页面路径
+     * @param pageName 页面名称
+     * @param request  请求对象
+     */
+    public void recordVisit(String pagePath, String pageName, HttpServletRequest request) {
+        try {
+            // ⚠️ 在主线程中提取必要信息，避免在虚拟线程中访问 request 对象
+            String clientIp = getClientIp(request);
+            String userAgent = request.getHeader("User-Agent");
+            String referer = request.getHeader("Referer");
+            String visitorId = generateVisitorId(request);
+
+            // 调用异步方法（虚拟线程执行）
+            recordVisitAsync(pagePath, pageName, clientIp, userAgent, referer, visitorId);
+        } catch (Exception e) {
+            log.error("提取访问信息失败: path={}", pagePath, e);
+        }
+    }
+
+    /**
+     * 异步记录访问统计（虚拟线程执行）
      *
      * 性能优势：
      * 1. 虚拟线程轻量级，可以承载数十万并发请求
      * 2. 自动调度，无需手动管理线程池
      * 3. IO操作（Redis/数据库）时自动让出CPU，高效利用资源
      *
-     * @param pagePath 页面路径
-     * @param pageName 页面名称
-     * @param request  请求对象
+     * 注意：不直接传递 HttpServletRequest，避免跨线程上下文问题
      */
     @Async("namedVirtualThreadExecutor")
-    public void recordVisit(String pagePath, String pageName, HttpServletRequest request) {
+    public void recordVisitAsync(String pagePath, String pageName,
+                                   String clientIp, String userAgent,
+                                   String referer, String visitorId) {
         try {
             String today = LocalDate.now().toString();
-            String visitorId = generateVisitorId(request);
 
             // 1. Redis PV 计数（每次访问 +1）
             String pvKey = REDIS_KEY_PREFIX_PV + pagePath + ":" + today;
@@ -77,25 +101,27 @@ public class VisitorStatsService {
             stringRedisTemplate.expire(uvKey, 7, TimeUnit.DAYS);
 
             // 3. 记录访问日志（可选，用于详细分析）
-            recordVisitorLog(pagePath, visitorId, request);
+            recordVisitorLog(pagePath, visitorId, clientIp, userAgent, referer);
 
-            log.debug("记录访问: page={}, visitor={}, isNew={}", pagePath, visitorId, addedCount != null && addedCount > 0);
+            log.debug("记录访问: page={}, visitor={}, ip={}, isNew={}",
+                pagePath, visitorId, clientIp, addedCount != null && addedCount > 0);
         } catch (Exception e) {
             log.error("记录访问失败: path={}", pagePath, e);
         }
     }
 
     /**
-     * 记录访问日志
+     * 记录访问日志（已经在虚拟线程中，使用提取好的信息）
      */
-    private void recordVisitorLog(String pagePath, String visitorId, HttpServletRequest request) {
+    private void recordVisitorLog(String pagePath, String visitorId,
+                                   String clientIp, String userAgent, String referer) {
         try {
             VisitorLog log = new VisitorLog()
                     .setPagePath(pagePath)
                     .setVisitorId(visitorId)
-                    .setIpAddress(getClientIp(request))
-                    .setUserAgent(request.getHeader("User-Agent"))
-                    .setReferer(request.getHeader("Referer"))
+                    .setIpAddress(clientIp)
+                    .setUserAgent(userAgent)
+                    .setReferer(referer)
                     .setVisitTime(LocalDateTime.now());
             visitorLogMapper.insert(log);
         } catch (Exception e) {
