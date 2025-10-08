@@ -1,0 +1,187 @@
+<!-- 访问统计前端展示示例 -->
+<!-- 可以将这段代码添加到 index.html 的合适位置 -->
+
+<!-- 1. 添加样式（放在 <head> 标签中或 base.css 文件中） -->
+<style>
+.visitor-stats {
+    text-align: center;
+    padding: 20px;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    color: white;
+    text-align: center;
+}
+
+.stat-item .label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.stat-item .value {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.stat-item .icon {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+    .stats-container {
+        gap: 20px;
+    }
+    
+    .stat-item .value {
+        font-size: 24px;
+    }
+}
+</style>
+
+<!-- 2. 添加HTML结构（放在页面合适的位置） -->
+<div class="visitor-stats">
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="label">
+                <span class="icon">👁️</span>
+                今日访问
+            </div>
+            <div class="value" id="today-pv">-</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">
+                <span class="icon">👥</span>
+                今日访客
+            </div>
+            <div class="value" id="today-uv">-</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">
+                <span class="icon">📊</span>
+                总访问量
+            </div>
+            <div class="value" id="total-pv">-</div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. 添加JavaScript代码（放在 </body> 之前） -->
+<script>
+(function() {
+    // 加载访问统计数据
+    function loadVisitorStats() {
+        fetch('/stats/summary?pagePath=/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200 && data.data) {
+                    // 更新今日数据
+                    updateElement('today-pv', data.data.today.pv);
+                    updateElement('today-uv', data.data.today.uv);
+                    
+                    // 更新总数据
+                    updateElement('total-pv', data.data.total.totalPv);
+                }
+            })
+            .catch(error => {
+                console.error('加载访问统计失败:', error);
+                // 失败时显示占位符
+                updateElement('today-pv', '0');
+                updateElement('today-uv', '0');
+                updateElement('total-pv', '0');
+            });
+    }
+    
+    // 格式化数字（添加千分位）
+    function formatNumber(num) {
+        if (num === undefined || num === null) return '0';
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    
+    // 更新元素内容
+    function updateElement(id, value) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = formatNumber(value);
+            // 添加渐入动画
+            element.style.opacity = '0';
+            setTimeout(() => {
+                element.style.transition = 'opacity 0.5s';
+                element.style.opacity = '1';
+            }, 100);
+        }
+    }
+    
+    // 页面加载完成后执行
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadVisitorStats);
+    } else {
+        loadVisitorStats();
+    }
+})();
+</script>
+
+<!-- 方案2: 简洁版（只显示总访问量） -->
+<!--
+<div style="text-align: center; padding: 10px; color: #666;">
+    <span>👁️ 访问量: <strong id="total-visits" style="color: #667eea;">-</strong></span>
+</div>
+
+<script>
+fetch('/stats/total?pagePath=/')
+    .then(res => res.json())
+    .then(data => {
+        if (data.code === 200) {
+            document.getElementById('total-visits').textContent = 
+                data.data.totalPv.toLocaleString();
+        }
+    });
+</script>
+-->
+
+<!-- 方案3: 在页脚显示 -->
+<!--
+<style>
+.footer-stats {
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #999;
+}
+.footer-stats strong {
+    color: #667eea;
+}
+</style>
+
+<div class="footer-stats">
+    本站总访问量: <strong id="site-visits">-</strong> 次 | 
+    今日访问: <strong id="today-visits">-</strong> 次
+</div>
+
+<script>
+fetch('/stats/summary?pagePath=/')
+    .then(res => res.json())
+    .then(data => {
+        if (data.code === 200) {
+            document.getElementById('site-visits').textContent = 
+                data.data.total.totalPv.toLocaleString();
+            document.getElementById('today-visits').textContent = 
+                data.data.today.pv.toLocaleString();
+        }
+    });
+</script>
+-->
+
