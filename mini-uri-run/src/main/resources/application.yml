@@ -49,6 +49,12 @@ spring:
   thymeleaf:
     encoding: utf-8
     mode: HTML
+  # 国际化配置
+  messages:
+    basename: messages
+    encoding: UTF-8
+    cache-duration: 3600
+    fallback-to-system-locale: false
 
 --- # redis
 spring:

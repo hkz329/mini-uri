@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <!-- SEO优化：添加描述和关键词 -->
-    <title>Mini URI - 免费高效的短链接生成器</title>
-    <meta name="description" content="Mini URI 提供免费、快速、稳定的短链接生成服务，支持自定义有效期，是您简化分享、提升品牌形象的理想选择。">
-    <meta name="keywords" content="短链接,短网址,短链接生成,网址缩短,URL缩短,Mini URI">
+    <title th:text="#{page.title}">Mini URI - 免费高效的短链接生成器</title>
+    <meta name="description" th:content="#{page.description}" content="Mini URI 提供免费、快速、稳定的短链接生成服务，支持自定义有效期，是您简化分享、提升品牌形象的理想选择。">
+    <meta name="keywords" th:content="#{page.keywords}" content="短链接,短网址,短链接生成,网址缩短,URL缩短,Mini URI">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <!-- 仅保留自定义脚本，使用原生实现 -->
 <!--    <script-->
@@ -22,33 +22,33 @@
 <body>
 <div class="box">
     <!-- SEO优化：添加H1标签 -->
-    <h1 style="text-align: center; margin-bottom: 20px;">短链接生成器</h1>
+    <h1 style="text-align: center; margin-bottom: 20px;" th:text="#{title.main}">短链接生成器</h1>
     <div>
         <div class="inp" id="long-wrapper">
-            <input type="text" id="long" placeholder="&nbsp;" aria-label="长链接输入框">
-            <label for="long" class="label">长链接</label>
+            <input type="text" id="long" placeholder="&nbsp;" th:aria-label="#{aria.long.input}" aria-label="长链接输入框">
+            <label for="long" class="label" th:text="#{label.long.url}">长链接</label>
             <span class="focus-bg"></span>
-            <button id="clear-long" type="button" class="clear-x" aria-label="清除输入" tabindex="-1">×</button>
+            <button id="clear-long" type="button" class="clear-x" th:aria-label="#{aria.clear.button}" aria-label="清除输入" tabindex="-1">×</button>
         </div>
     </div>
     <div class="options">
         <!-- SEO优化：添加H2标签 -->
-        <h2 class="options-title">有效时间</h2>
+        <h2 class="options-title" th:text="#{options.title}">有效时间</h2>
         <div class="options-group">
-            <label for="exp-1"><input type="radio" id="exp-1" name="expirationTime" value="1" checked><span>1天</span></label>
-            <label for="exp-7"><input type="radio" id="exp-7" name="expirationTime" value="7"><span>7天</span></label>
-            <label for="exp-30"><input type="radio" id="exp-30" name="expirationTime" value="30"><span>1个月</span></label>
-            <label for="exp-90"><input type="radio" id="exp-90" name="expirationTime" value="90"><span>3个月</span></label>
+            <label for="exp-1"><input type="radio" id="exp-1" name="expirationTime" value="1" checked><span th:text="#{options.1day}">1天</span></label>
+            <label for="exp-7"><input type="radio" id="exp-7" name="expirationTime" value="7"><span th:text="#{options.7days}">7天</span></label>
+            <label for="exp-30"><input type="radio" id="exp-30" name="expirationTime" value="30"><span th:text="#{options.1month}">1个月</span></label>
+            <label for="exp-90"><input type="radio" id="exp-90" name="expirationTime" value="90"><span th:text="#{options.3months}">3个月</span></label>
         </div>
     </div>
-    <button type="button" id="generate">生成短链接</button>
+    <button type="button" id="generate" th:text="#{button.generate}">生成短链接</button>
     <div style="text-align: center;">
         <label for="short" class="inp short">
-            <input type="text" id="short" placeholder="&nbsp;" aria-label="短链接输出框" readonly>
-            <span class="label">短链接</span>
+            <input type="text" id="short" placeholder="&nbsp;" th:aria-label="#{aria.short.input}" aria-label="短链接输出框" readonly>
+            <span class="label" th:text="#{label.short.url}">短链接</span>
             <span class="focus-bg"></span>
         </label>
-        <button type="button" id="copy" class="btn-copy">Copy</button>
+        <button type="button" id="copy" class="btn-copy" th:text="#{button.copy}">Copy</button>
     </div>
 </div>
 
@@ -57,8 +57,8 @@
     <div class="footer-content">
         <!-- 赞赏码区域 -->
         <div class="appreciation-section">
-            <h3>支持我们</h3>
-            <p>如果这个工具对您有帮助，欢迎请我们喝杯咖啡 ☕</p>
+            <h3 th:text="#{footer.support.title}">支持我们</h3>
+            <p th:text="#{footer.support.desc}">如果这个工具对您有帮助，欢迎请我们喝杯咖啡 ☕</p>
             <div class="qr-container">
                 <div class="qr-code" id="qr-code">
                     <!-- 懒加载的赞赏码图片 -->
@@ -69,39 +69,40 @@
                                 <path d="M60 30C43.4315 30 30 43.4315 30 60C30 76.5685 43.4315 90 60 90C76.5685 90 90 76.5685 90 60C90 43.4315 76.5685 30 60 30ZM60 35C73.8071 35 85 46.1929 85 60C85 73.8071 73.8071 85 60 85C46.1929 85 35 73.8071 35 60C35 46.1929 46.1929 35 60 35Z" fill="#6b7280"/>
                                 <circle cx="60" cy="60" r="8" fill="#6b7280"/>
                             </svg>
-                            <p class="qr-text">赞赏码</p>
+                            <p class="qr-text" th:text="#{footer.qrcode.placeholder}">赞赏码</p>
                         </div>
                         <div class="qr-loading" id="qr-loading" style="display: none;">
                             <div class="loading-spinner"></div>
-                            <p>加载中...</p>
+                            <p th:text="#{footer.qrcode.loading}">加载中...</p>
                         </div>
                         <img
                             class="qr-image lazy-load"
                             id="qr-image"
                             th:attr="data-src=@{/static/img/zanshang.png}"
+                            th:alt="#{footer.qrcode.alt}"
                             alt="赞赏码"
                             style="display: none;"
                         />
                     </div>
                 </div>
-                <button type="button" class="btn-show-qr" onclick="toggleQRCode()">显示赞赏码</button>
+                <button type="button" class="btn-show-qr" onclick="toggleQRCode()" id="toggle-qr-btn" th:text="#{footer.qrcode.show}">显示赞赏码</button>
             </div>
         </div>
 
         <!-- 免责声明和版权信息 -->
         <div class="legal-section">
             <div class="disclaimer">
-                <h4>免责声明</h4>
-                <p>本服务仅提供网址缩短功能，不对链接内容负责。用户应确保所缩短的链接内容合法合规，不得用于违法违规用途。使用本服务即表示您同意承担相应责任。</p>
+                <h4 th:text="#{footer.disclaimer.title}">免责声明</h4>
+                <p th:text="#{footer.disclaimer.content}">本服务仅提供网址缩短功能，不对链接内容负责。用户应确保所缩短的链接内容合法合规，不得用于违法违规用途。使用本服务即表示您同意承担相应责任。</p>
             </div>
 
             <div class="terms">
-                <h4>使用条款</h4>
+                <h4 th:text="#{footer.terms.title}">使用条款</h4>
                 <ul>
-                    <li>禁止缩短包含恶意软件、病毒或其他有害内容的链接</li>
-                    <li>禁止用于垃圾邮件、钓鱼或其他欺诈活动</li>
-                    <li>我们保留删除违规链接的权利</li>
-                    <li>服务可能因维护或其他原因暂时中断</li>
+                    <li th:text="#{footer.terms.1}">禁止缩短包含恶意软件、病毒或其他有害内容的链接</li>
+                    <li th:text="#{footer.terms.2}">禁止用于垃圾邮件、钓鱼或其他欺诈活动</li>
+                    <li th:text="#{footer.terms.3}">我们保留删除违规链接的权利</li>
+                    <li th:text="#{footer.terms.4}">服务可能因维护或其他原因暂时中断</li>
                 </ul>
             </div>
         </div>
@@ -109,18 +110,40 @@
         <!-- 版权信息 -->
         <div class="copyright">
             <div class="copyright-main">
-                <p>&copy; 2025 Mini URI. 保留所有权利。</p>
+                <p th:text="#{footer.copyright}">&copy; 2025 Mini URI. 保留所有权利。</p>
             </div>
             <div class="links">
-                <a href="#" onclick="showPrivacyPolicy()">隐私政策</a>
+                <a href="#" onclick="showPrivacyPolicy()" th:text="#{footer.link.privacy}">隐私政策</a>
                 <span class="separator">|</span>
-                <a href="#" onclick="showServiceTerms()">服务条款</a>
+                <a href="#" onclick="showServiceTerms()" th:text="#{footer.link.terms}">服务条款</a>
                 <span class="separator">|</span>
-                <a href="#" onclick="showContact()">联系我们</a>
+                <a href="#" onclick="showContact()" th:text="#{footer.link.contact}">联系我们</a>
             </div>
         </div>
     </div>
 </footer>
+
+<script th:inline="javascript">
+    // 国际化文本
+    const i18n = {
+        buttonGenerate: /*[[#{button.generate}]]*/ '生成短链接',
+        buttonGenerating: /*[[#{button.generating}]]*/ '生成中...',
+        buttonCopy: /*[[#{button.copy}]]*/ 'Copy',
+        buttonCopied: /*[[#{button.copied}]]*/ 'Copied!',
+        alertInputEmpty: /*[[#{alert.input.empty}]]*/ '请输入原始链接',
+        alertGenerateFailed: /*[[#{alert.generate.failed}]]*/ '生成失败',
+        alertNoCopyContent: /*[[#{alert.no.copy.content}]]*/ '没有可复制的内容',
+        alertCopyFailed: /*[[#{alert.copy.failed}]]*/ '复制失败，请手动复制',
+        qrCodeShow: /*[[#{footer.qrcode.show}]]*/ '显示赞赏码',
+        qrCodeHide: /*[[#{footer.qrcode.hide}]]*/ '隐藏赞赏码',
+        dialogPrivacyTitle: /*[[#{dialog.privacy.title}]]*/ '隐私政策',
+        dialogPrivacyContent: /*[[#{dialog.privacy.content}]]*/ '',
+        dialogTermsTitle: /*[[#{dialog.terms.title}]]*/ '服务条款',
+        dialogTermsContent: /*[[#{dialog.terms.content}]]*/ '',
+        dialogContactTitle: /*[[#{dialog.contact.title}]]*/ '联系我们',
+        dialogContactContent: /*[[#{dialog.contact.content}]]*/ ''
+    };
+</script>
 
 <script>
     window.addEventListener('DOMContentLoaded', function () {
@@ -169,7 +192,7 @@
         function setButtonLoading(loading) {
             if (loading) {
                 btnGenerate.disabled = true;
-                btnGenerate.textContent = '生成中...';
+                btnGenerate.textContent = i18n.buttonGenerating;
                 isGenerating = true;
             } else {
                 btnGenerate.disabled = false;
@@ -189,7 +212,7 @@
             const expireTime = checked ? checked.value : '1';
 
             if (!originalUrl) {
-                alert('请输入原始链接');
+                alert(i18n.alertInputEmpty);
                 return;
             }
 
@@ -203,7 +226,7 @@
                 if (res && res.code === 200) {
                     inputShort.value = res.data || '';
                 } else {
-                    alert(res && (res.msg || res.message) || '生成失败');
+                    alert(res && (res.msg || res.message) || i18n.alertGenerateFailed);
                 }
             }).catch(function (err) {
                 alert(err && err.message ? err.message : String(err));
@@ -216,13 +239,13 @@
         btnCopy.addEventListener('click', function () {
             const text = inputShort.value || '';
             if (!text) {
-                alert('没有可复制的内容');
+                alert(i18n.alertNoCopyContent);
                 return;
             }
             if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
                 navigator.clipboard.writeText(text).then(function () {
-                    btnCopy.textContent = 'Copied!';
-                    setTimeout(function () { btnCopy.textContent = 'Copy'; }, 2000);
+                    btnCopy.textContent = i18n.buttonCopied;
+                    setTimeout(function () { btnCopy.textContent = i18n.buttonCopy; }, 2000);
                 }).catch(function () {
                     fallbackCopy();
                 });
@@ -236,13 +259,13 @@
             try {
                 const ok = document.execCommand('copy');
                 if (ok) {
-                    btnCopy.textContent = 'Copied!';
-                    setTimeout(function () { btnCopy.textContent = 'Copy'; }, 2000);
+                    btnCopy.textContent = i18n.buttonCopied;
+                    setTimeout(function () { btnCopy.textContent = i18n.buttonCopy; }, 2000);
                 } else {
-                    alert('复制失败，请手动复制');
+                    alert(i18n.alertCopyFailed);
                 }
             } catch (e) {
-                alert('复制失败，请手动复制');
+                alert(i18n.alertCopyFailed);
             } finally {
                 window.getSelection && window.getSelection().removeAllRanges();
                 inputShort.blur();
@@ -295,26 +318,26 @@
 
         if (qrCode.style.display === 'none' || qrCode.style.display === '') {
             qrCode.style.display = 'block';
-            button.textContent = '隐藏赞赏码';
+            button.textContent = i18n.qrCodeHide;
 
             // 当显示赞赏码时，直接加载图片
             loadQRImage();
         } else {
             qrCode.style.display = 'none';
-            button.textContent = '显示赞赏码';
+            button.textContent = i18n.qrCodeShow;
         }
     };
 
     window.showPrivacyPolicy = function() {
-        alert('隐私政策：\n\n我们重视您的隐私保护。本服务不会收集您的个人敏感信息，仅记录必要的使用统计数据以改善服务质量。我们承诺不会将您的数据分享给第三方。');
+        alert(i18n.dialogPrivacyContent);
     };
 
     window.showServiceTerms = function() {
-        alert('服务条款：\n\n1. 本服务免费提供，但我们保留调整服务内容的权利\n2. 用户需对自己的行为负责\n3. 禁止滥用服务进行违法活动\n4. 我们保留终止服务的权利\n\n详细条款请联系我们获取。');
+        alert(i18n.dialogTermsContent);
     };
 
     window.showContact = function() {
-        alert('联系我们：\n\n如有问题或建议，请通过以下方式联系：\n\n邮箱：zhang32912@gmail.com\n\n我们会尽快回复您的消息。');
+        alert(i18n.dialogContactContent);
     };
 
     // 初始化页脚
