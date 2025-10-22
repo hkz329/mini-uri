@@ -60,12 +60,9 @@ spring:
 spring:
   data:
     redis:
-      host: ${env.redis.host}
+      url: ${env.redis.url}
       timeout: 10s
-      username: ${env.redis.username}
-      password: ${env.redis.password}
       database: 0
-      port: 6379
       ssl:
         enabled: false
       lettuce:
@@ -84,9 +81,6 @@ spring:
     # jdbc 所有参数配置参考 https://lionli.blog.csdn.net/article/details/122018562
     # rewriteBatchedStatements=true 批处理优化 大幅提升批量插入更新删除性能(对数据库有性能损耗 使用批量操作应考虑性能问题)
     url: ${env.mysql.url}
-    username: ${env.mysql.username}
-    password: ${env.mysql.password}
-    
     # HikariCP 连接池配置（Spring Boot 默认连接池）
     hikari:
       # 连接池名称

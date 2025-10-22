@@ -1,10 +1,6 @@
-env.redis.host: 127.0.0.1
-env.mysql.url: jdbc:mysql://127.0.0.1:3306/mini_uri?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&autoReconnect=true&rewriteBatchedStatements=true
-env.mysql.username: root
-env.mysql.password: 1234
+env.mysql.url: jdbc:mysql://root:1234@localhost:3306/mini_uri?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&autoReconnect=true&rewriteBatchedStatements=true
 env.server.host: https://miniuri.com/
-env.redis.username:
-env.redis.password:
+env.redis.url: redis://localhost:6379
 
 management:
   server:
