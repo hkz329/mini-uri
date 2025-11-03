@@ -10,8 +10,8 @@
     <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 按天回滚 daily -->
-            <!-- log.dir 在maven profile里配置 -->
-            <fileNamePattern>/usr/app/log/miniuri-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 相对路径：项目根目录/logs/ (兼容 Windows/Linux) -->
+            <fileNamePattern>logs/miniuri-error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 日志最大的历史 30天 -->
             <maxHistory>10</maxHistory>
         </rollingPolicy>
@@ -28,7 +28,8 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/usr/app/log/miniuri.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 相对路径：项目根目录/logs/ (兼容 Windows/Linux) -->
+            <fileNamePattern>logs/miniuri.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
 
@@ -36,6 +37,40 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId}] %-5p [%file:%line] - %m%n</pattern>
         </encoder>
     </appender>
+
+    <!-- ========== 访问统计日志配置（轻量级，不影响主业务） ========== -->
+    <!-- 访问统计日志单独输出 -->
+    <appender name="VISITOR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 相对路径：项目根目录/logs/ (兼容 Windows/Linux) -->
+        <file>logs/visitor-stats.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 每天滚动 -->
+            <fileNamePattern>logs/visitor-stats.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30 天 -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 异步写入（进一步降低 CPU 开销，不阻塞主线程） -->
+    <appender name="ASYNC_VISITOR" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 队列大小 -->
+        <queueSize>512</queueSize>
+        <!-- 丢弃阈值：队列满 80% 时开始丢弃 TRACE/DEBUG/INFO（保护主业务）-->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 不阻塞主线程（队列满时直接丢弃） -->
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="VISITOR_FILE" />
+    </appender>
+
+    <!-- 只记录访问统计日志，不输出到控制台和主日志文件 -->
+    <logger name="com.zjz.mini.uri.run.infrastructure.interceptor.VisitorStatsInterceptor" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_VISITOR" />
+    </logger>
+    <!-- ========== 访问统计日志配置结束 ========== -->
 
     <logger name="org.springframework" level="INFO" />
     <root level="INFO">

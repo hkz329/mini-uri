@@ -29,14 +29,46 @@ public class VisitorStatsInterceptor implements HandlerInterceptor {
             // 只统计HTML页面访问，排除静态资源和API
             if (shouldRecord(path)) {
                 String pageName = getPageName(path);
-                // 异步记录，不阻塞请求
-                visitorStatsService.recordVisit(path, pageName, request);
+                // 方案1：直接记录日志（最轻量，CPU 开销 < 1ms）
+                logVisitEvent(path, pageName, request);
+                
+                // 方案2：异步记录到数据库（可选，注释掉以减少 CPU 开销）
+                // visitorStatsService.recordVisit(path, pageName, request);
             }
         } catch (Exception e) {
             // 统计失败不影响正常业务
             log.error("访问统计失败", e);
-            }
+        }
         return true;
+    }
+
+    /**
+     * 记录访问事件日志（结构化 JSON，供日志收集工具解析）
+     * CPU 开销 < 1ms，不阻塞请求
+     */
+    private void logVisitEvent(String path, String pageName, HttpServletRequest request) {
+        try {
+            String clientIp = getClientIp(request);
+            String userAgent = request.getHeader("User-Agent");
+            String referer = request.getHeader("Referer");
+            
+            // 结构化日志输出（JSON 格式，便于 ELK/Loki 解析）
+            log.info("VISITOR_EVENT|{}|{}|{}|{}|{}", 
+                path, pageName, clientIp, userAgent, referer);
+        } catch (Exception e) {
+            // 忽略，不影响主业务
+        }
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
     /**
